@@ -1,0 +1,7 @@
+{
+  "_comment": "文档先行框架项目配置。放在项目根目录，命名为 .doc-first.json",
+  "sourcePatterns": [
+    "src[/\\\\](main|test)[/\\\\]"
+  ],
+  "docDir": "docs/plans/"
+}

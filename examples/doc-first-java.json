@@ -1,0 +1,7 @@
+{
+  "_comment": "Java/Maven 项目配置示例。重命名为 .doc-first.json 放在项目根目录。",
+  "sourcePatterns": [
+    "src[/\\\\](main|test)[/\\\\]java"
+  ],
+  "docDir": "docs/plans/"
+}
