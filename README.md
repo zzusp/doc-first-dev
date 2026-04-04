@@ -6,19 +6,26 @@
 
 ```
 doc-first-dev/
-├── README.md                        # 本文件
+├── README.md                              # 本文件
 ├── skill/
-│   └── SKILL.md                     # 通用版 /spec skill
+│   ├── SKILL.md                          # /spec skill（日常开发）
+│   └── init/
+│       └── SKILL.md                      # /spec-init skill（已有项目初始化）
+│   └── init/reference/
+│       └── languages.md                  # 语言扫描规则参考
 ├── hooks/
-│   └── check-spec-first.ps1         # 通用版 PreToolUse hook
+│   ├── check-spec-first.ps1              # PreToolUse hook（PowerShell版）
+│   ├── check-spec-first.sh               # PreToolUse hook（Bash版，跨平台）
+│   ├── generate-baseline-specs.ps1       # Spec生成脚本（PowerShell版）
+│   └── generate-baseline-specs.sh         # Spec生成脚本（Bash版，跨平台）
 ├── templates/
-│   ├── settings.json                # .claude/settings.json 模板
-│   ├── CLAUDE.md-snippet.md         # 粘贴到项目 CLAUDE.md 的片段
-│   ├── tech-spec-blank.md           # 空白 8 节技术方案模板
-│   ├── plans-README.md              # docs/plans/README.md 模块索引模板
-│   └── doc-first.json               # .doc-first.json 项目配置模板
+│   ├── settings.json                     # .claude/settings.json 模板
+│   ├── CLAUDE.md-snippet.md              # 粘贴到项目 CLAUDE.md 的片段
+│   ├── tech-spec-blank.md                # 空白 8 节技术方案模板
+│   ├── plans-README.md                   # docs/plans/README.md 模块索引模板
+│   └── doc-first.json                   # .doc-first.json 项目配置模板
 └── examples/
-    └── doc-first-java.json          # Java/Maven 项目配置示例
+    └── doc-first-java.json               # Java/Maven 项目配置示例
 ```
 
 ---
@@ -27,65 +34,88 @@ doc-first-dev/
 
 | 组件 | 作用 |
 |---|---|
-| `/spec` skill | 驱动从需求到交付的完整周期（Step 0 匹配文档 → Phase A 分析更新 → Phase B 开发 → Phase C 验收 → Phase D 收尾） |
+| `/spec` skill | 驱动从需求到交付的完整周期（分析→更新spec→开发→验收→收尾） |
+| `/spec-init` skill | 已有项目的初始化：从代码逆向生成技术方案基线 |
 | PreToolUse hook | 在修改源文件前自动检查 spec 是否已更新，未更新则阻断并提示 |
 | `.doc-first.json` | 每个项目的配置文件，声明受保护的源码路径和文档目录 |
 
 ---
 
-## 快速安装（新项目）
+## 安装 — 选择你的场景
 
-### 步骤 1：安装 /spec skill（全局，一次性）
+### 场景一：已有项目（有代码）
 
-```bash
-# 复制到 Claude Code skills 目录
-cp skill/SKILL.md ~/.claude/skills/spec/SKILL.md
-```
+已有项目需要先通过 `/spec-init` 从代码逆向生成技术方案基线，再开始日常开发。
 
-安装后在任意项目中运行 `/spec <需求描述>` 即可触发。
-
-### 步骤 2：在项目中启用 hook
-
-**2a. 复制 hook 脚本**
+**步骤 1：安装 skills（全局，一次性）**
 
 ```bash
-mkdir -p <project>/.claude/hooks
-cp hooks/check-spec-first.ps1 <project>/.claude/hooks/
+cp -r skill/* ~/.claude/skills/
 ```
 
-**2b. 创建项目配置文件**
+**步骤 2：在项目中初始化**
 
 ```bash
-# Java/Maven 项目
-cp examples/doc-first-java.json <project>/.doc-first.json
+cd <your-project>
 
-# 其他语言：从模板开始，修改 sourcePatterns
-cp templates/doc-first.json <project>/.doc-first.json
+# 在项目根目录运行
+/spec-init
 ```
 
-**2c. 配置 `.claude/settings.json`**
+`/spec-init` 会自动：
+1. 分析代码结构，生成功能清单草稿
+2. 请你确认功能清单
+3. 为每个模块生成 baseline spec
+4. 输出 `docs/plans/init-report.md`
+
+> 初始化只运行一次。完成后 hook 开始生效。
+
+**步骤 3：提交产物**
 
 ```bash
-cp templates/settings.json <project>/.claude/settings.json
-# 如项目已有 settings.json，将 hooks 部分合并进去
+git add .
+git commit -m "初始化 doc-first 技术方案基线"
 ```
 
-**2d. 初始化文档目录**
+---
+
+### 场景二：新项目（无代码）
+
+新项目无需初始化，直接安装后即可使用。
+
+**步骤 1：安装 skills（全局，一次性）**
 
 ```bash
-mkdir -p <project>/docs/plans
-cp templates/plans-README.md <project>/docs/plans/README.md
+cp -r skill/* ~/.claude/skills/
 ```
 
-**2e. 更新 CLAUDE.md**
+**步骤 2：在项目中启用 hook**
 
-将 `templates/CLAUDE.md-snippet.md` 的内容粘贴到项目 `CLAUDE.md`，填写实际的构建命令和启动/认证命令。
+```bash
+cd <your-project>
 
-**这两个章节是必填的**，`/spec` skill 的 Phase B.4（构建验证）和 Phase C.1（验收准备）会引用它们。
+# 复制 hook 脚本（按平台选择）
+cp hooks/check-spec-first.sh .claude/hooks/      # Linux/macOS/MSYS2
+cp hooks/check-spec-first.ps1 .claude/hooks/     # Windows PowerShell
 
-### 步骤 3：验证安装
+# 复制项目配置
+cp examples/doc-first-java.json .doc-first.json  # Java/Maven 项目
+# 或
+cp templates/doc-first.json .doc-first.json       # 其他语言，修改 sourcePatterns
 
-在 Claude Code 中运行：
+# 复制并合并 settings
+cp templates/settings.json .claude/settings.json
+
+# 初始化文档目录
+mkdir -p docs/plans
+cp templates/plans-README.md docs/plans/README.md
+```
+
+**步骤 3：更新 CLAUDE.md**
+
+将 `templates/CLAUDE.md-snippet.md` 的内容粘贴到项目 `CLAUDE.md`，填写构建命令和启动/认证命令。这两个章节是必填的，`/spec` skill 的 Phase B.4 和 Phase C.1 会引用。
+
+**步骤 4：验证安装**
 
 ```
 /spec 测试安装是否正常
@@ -123,7 +153,7 @@ cp templates/plans-README.md <project>/docs/plans/README.md
 
 ---
 
-## 日常使用流程
+## 日常开发流程
 
 ```
 /spec <需求描述>
@@ -144,26 +174,26 @@ cp templates/plans-README.md <project>/docs/plans/README.md
   └─ Phase D  D.1一致性检查 → D.2交付简报 + 提示/whylog-record
 ```
 
----
+## 新建模块
 
-## 新建模块 spec 文档
-
-运行 `/spec <需求>` 选择"Other → 新建文档"，skill 会自动使用 `templates/tech-spec-blank.md` 创建骨架。
+运行 `/spec <需求>` 选择"Other → 新建文档"，skill 会自动使用标准 8 节骨架创建空白 spec。
 
 或手动：
 
 ```bash
 mkdir -p docs/plans/<module-name>
-cp ~/.claude/doc-first-dev/templates/tech-spec-blank.md \
-   docs/plans/<module-name>/<feature>-tech-spec.md
+cp templates/tech-spec-blank.md docs/plans/<module-name>/<feature>-tech-spec.md
 ```
 
 ---
 
 ## FAQ
 
+**Q：已有项目初始化后，hook 会不会拦截所有现有代码修改？**
+A：不会。初始化后所有 baseline spec 的任务和验收项均为 ✅ 完成状态。只有当你开始新的变更（功能新增、Bug修复等）时，才会触发 Phase A 的 spec 更新要求。hook 只拦截"未更新 spec 的源文件修改"，现有代码不受影响。
+
 **Q：hook 在 macOS/Linux 上能用吗？**
-A：当前为 PowerShell 脚本，需要安装 `pwsh`（PowerShell Core）。或将 `hooks/check-spec-first.ps1` 改写为等价的 bash 脚本（逻辑相同：读 `.doc-first.json` → 匹配路径 → 检查 git diff）。
+A：能。`hooks/check-spec-first.sh` 是跨平台 Bash 版，支持 Linux、macOS、Windows Git Bash / MSYS2 / MinGW。按平台选择对应脚本复制即可。
 
 **Q：想临时跳过 hook 怎么办？**
 A：在 `.claude/settings.json` 中临时注释掉 hooks 配置，操作完成后恢复。

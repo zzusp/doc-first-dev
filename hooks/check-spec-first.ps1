@@ -84,6 +84,27 @@ try {
 
 if (-not $specChanged) {
     $docDirDisplay = $docDir.TrimEnd('/').TrimEnd('\')
+
+    # 尝试读取模块列表，增强提示信息
+    $readmePath = Join-Path $projectRoot "docs\plans\README.md"
+    $moduleHint = ""
+    if (Test-Path $readmePath) {
+        $readmeLines = Get-Content $readmePath -Encoding UTF8
+        $moduleNames = @()
+        foreach ($line in $readmeLines) {
+            # 提取表格第一列中的加粗模块名（如 "| **1. 用户管理** | ..."）
+            if ($line -match '^\|\s*\*\*[^*]+\*\*') {
+                $m = [regex]::Match($line, '\*\*([^*]+)\*\*')
+                if ($m.Success -and $m.Groups[1].Value -notmatch '模块|功能|技术方案') {
+                    $moduleNames += $m.Groups[1].Value.Trim()
+                }
+            }
+        }
+        if ($moduleNames.Count -gt 0) {
+            $moduleHint = "当前模块：" + ($moduleNames -join " · ")
+        }
+    }
+
     Write-Host ""
     Write-Host "╔══════════════════════════════════════════════════════════╗"
     Write-Host "║  文档先行：尚未更新技术方案文档                                ║"
@@ -91,6 +112,10 @@ if (-not $specChanged) {
     Write-Host "║  检测到即将修改源文件，但 $($docDirDisplay) 下              ║"
     Write-Host "║  尚无未提交的变更。                                         ║"
     Write-Host "║                                                          ║"
+    if ($moduleHint) {
+        Write-Host "║  $($moduleHint)"
+        Write-Host "║                                                          ║"
+    }
     Write-Host "║  请先运行 /spec <需求描述> 更新技术方案文档，                  ║"
     Write-Host "║  完成后即可继续代码修改。                                     ║"
     Write-Host "╚══════════════════════════════════════════════════════════╝"
