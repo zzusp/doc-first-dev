@@ -8,11 +8,14 @@
 doc-first-dev/
 ├── README.md                              # 本文件
 ├── skill/
-│   ├── SKILL.md                          # /spec skill（日常开发）
+│   ├── spec/
+│   │   └── SKILL.md                      # /spec skill（日常开发）
+│   ├── check/
+│   │   └── SKILL.md                      # /spec-check skill（健康检查）
 │   └── init/
-│       └── SKILL.md                      # /spec-init skill（已有项目初始化）
-│   └── init/reference/
-│       └── languages.md                  # 语言扫描规则参考
+│       ├── SKILL.md                      # /spec-init skill（已有项目初始化）
+│       └── reference/
+│           └── languages.md              # 语言扫描规则参考
 ├── hooks/
 │   └── generate-baseline-specs.py         # Spec生成脚本（Python版，跨平台）
 ├── templates/
@@ -32,6 +35,7 @@ doc-first-dev/
 | 组件 | 作用 |
 |---|---|
 | `/spec` skill | 驱动从需求到交付的完整周期（分析→更新spec→spec确认→开发→验收→收尾） |
+| `/spec-check` skill | 对技术方案文档执行健康检查，验证 spec 内部一致性与代码符合度 |
 | `/spec-init` skill | 已有项目的初始化：从代码逆向生成技术方案基线 |
 | `.doc-first.json` | 每个项目的配置文件，声明源码路径匹配规则与文档目录约定 |
 
