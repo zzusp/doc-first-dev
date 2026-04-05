@@ -12,6 +12,10 @@ doc-first-dev/
 │   │   └── SKILL.md                      # /spec skill（日常开发）
 │   ├── check/
 │   │   └── SKILL.md                      # /spec-check skill（健康检查）
+│   ├── audit/
+│   │   └── SKILL.md                      # /spec-audit skill（全局健康度审计）
+│   ├── dashboard/
+│   │   └── SKILL.md                      # /spec-dashboard skill（仪表盘生成）
 │   └── init/
 │       ├── SKILL.md                      # /spec-init skill（已有项目初始化）
 │       └── reference/
@@ -23,7 +27,9 @@ doc-first-dev/
 │   ├── CLAUDE.md-snippet.md              # 粘贴到项目 CLAUDE.md 的片段
 │   ├── tech-spec-blank.md                # 空白 8 节技术方案模板
 │   ├── plans-README.md                   # docs/plans/README.md 模块索引模板
-│   └── doc-first.json                   # .doc-first.json 项目配置模板
+│   ├── doc-first.json                   # .doc-first.json 项目配置模板
+│   └── dashboard/
+│       └── index.html                    # Spec 仪表盘（静态 HTML）
 └── examples/
     └── doc-first-java.json               # Java/Maven 项目配置示例
 ```
@@ -36,8 +42,11 @@ doc-first-dev/
 |---|---|
 | `/spec` skill | 驱动从需求到交付的完整周期（分析→更新spec→spec确认→开发→验收→收尾） |
 | `/spec-check` skill | 对技术方案文档执行健康检查，验证 spec 内部一致性与代码符合度 |
+| `/spec-audit` skill | 对全量 spec 执行结构健康度审计，快速识别空章节、孤立任务、状态不一致等问题；输出 JSON 数据供仪表盘使用 |
+| `/spec-dashboard` skill | 读取审计 JSON 数据，生成可浏览器打开的 HTML 仪表盘 |
 | `/spec-init` skill | 已有项目的初始化：从代码逆向生成技术方案基线 |
 | `.doc-first.json` | 每个项目的配置文件，声明源码路径匹配规则与文档目录约定 |
+| 仪表盘 | 静态 HTML 页面，展示模块进度、健康度评分和问题列表（由 /spec-dashboard 生成） |
 
 ---
 
