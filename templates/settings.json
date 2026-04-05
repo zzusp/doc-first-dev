@@ -1,16 +1,1 @@
-{
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Edit|Write|MultiEdit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash .claude/hooks/check-spec-first.sh",
-            "description": "Bash版：Linux/macOS/Git Bash/MSYS2 用户使用此配置"
-          }
-        ]
-      }
-    ]
-  }
-}
+{}

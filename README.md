@@ -14,10 +14,7 @@ doc-first-dev/
 │   └── init/reference/
 │       └── languages.md                  # 语言扫描规则参考
 ├── hooks/
-│   ├── check-spec-first.ps1              # PreToolUse hook（PowerShell版）
-│   ├── check-spec-first.sh               # PreToolUse hook（Bash版，跨平台）
-│   ├── generate-baseline-specs.ps1       # Spec生成脚本（PowerShell版）
-│   └── generate-baseline-specs.sh         # Spec生成脚本（Bash版，跨平台）
+│   └── generate-baseline-specs.py         # Spec生成脚本（Python版，跨平台）
 ├── templates/
 │   ├── settings.json                     # .claude/settings.json 模板
 │   ├── CLAUDE.md-snippet.md              # 粘贴到项目 CLAUDE.md 的片段
@@ -34,10 +31,9 @@ doc-first-dev/
 
 | 组件 | 作用 |
 |---|---|
-| `/spec` skill | 驱动从需求到交付的完整周期（分析→更新spec→开发→验收→收尾） |
+| `/spec` skill | 驱动从需求到交付的完整周期（分析→更新spec→spec确认→开发→验收→收尾） |
 | `/spec-init` skill | 已有项目的初始化：从代码逆向生成技术方案基线 |
-| PreToolUse hook | 在修改源文件前自动检查 spec 是否已更新，未更新则阻断并提示 |
-| `.doc-first.json` | 每个项目的配置文件，声明受保护的源码路径和文档目录 |
+| `.doc-first.json` | 每个项目的配置文件，声明源码路径匹配规则与文档目录约定 |
 
 ---
 
@@ -45,14 +41,14 @@ doc-first-dev/
 
 ### 环境依赖（安装前）
 
-- Bash 方案依赖：`bash`、`jq`、`git`
-- PowerShell 方案依赖：`powershell`、`git`
+- 基础依赖：`git`
+- 初始化脚本依赖：`python3` 或 `python`（用于生成 baseline spec）
 
 可先自检：
 
 ```bash
-jq --version
 git --version
+python3 --version  # 或 python --version
 ```
 
 ### 场景一：已有项目（有代码）
@@ -80,7 +76,7 @@ cd <your-project>
 3. 为每个模块生成 baseline spec
 4. 输出 `docs/plans/init-report.md`
 
-> 初始化只运行一次。完成后 hook 开始生效。
+> 初始化只运行一次。完成后即可进入日常 `/spec` 流程。
 
 **步骤 3：提交产物**
 
@@ -101,24 +97,15 @@ git commit -m "初始化 doc-first 技术方案基线"
 cp -r skill/* ~/.claude/skills/
 ```
 
-**步骤 2：在项目中启用 hook**
+**步骤 2：初始化文档与项目配置**
 
 ```bash
 cd <your-project>
-
-# 复制 hook 脚本（按平台选择）
-cp hooks/check-spec-first.sh .claude/hooks/      # Linux/macOS/MSYS2
-cp hooks/check-spec-first.ps1 .claude/hooks/     # Windows PowerShell
 
 # 复制项目配置
 cp examples/doc-first-java.json .doc-first.json  # Java/Maven 项目
 # 或
 cp templates/doc-first.json .doc-first.json       # 其他语言，修改 sourcePatterns
-
-# 复制并合并 settings（按平台选择）
-cp templates/settings.json .claude/settings.json          # Linux/macOS/Git Bash
-# 或
-cp templates/settings.windows.json .claude/settings.json  # Windows PowerShell
 
 # 初始化文档目录
 mkdir -p docs/plans
@@ -135,7 +122,7 @@ cp templates/plans-README.md docs/plans/README.md
 /spec 测试安装是否正常
 ```
 
-应看到文档选择器弹出。若直接尝试修改源文件而未改 spec，应看到 hook 拦截提示。
+应看到文档选择器弹出。当前版本默认不启用 PreToolUse 拦截，先按 `/spec` 流程观察执行效果。
 
 ---
 
@@ -143,8 +130,8 @@ cp templates/plans-README.md docs/plans/README.md
 
 | 参数 | 类型 | 说明 | 省略时的默认值 |
 |---|---|---|---|
-| `sourcePatterns` | `string[]` | 正则数组，匹配需要拦截的源文件路径 | `["src[/\\]"]` |
-| `docDir` | `string` | 文档目录，用于检测 git 未提交变更 | `"docs/plans/"` |
+| `sourcePatterns` | `string[]` | 正则数组，用于定义项目源码目录匹配规则 | `["src[/\\]"]` |
+| `docDir` | `string` | 文档目录约定，用于 `/spec` 流程定位技术方案文档 | `"docs/plans/"` |
 
 ### 各语言 sourcePatterns 参考
 
@@ -175,9 +162,13 @@ cp templates/plans-README.md docs/plans/README.md
   ├─ Step 0  匹配文档 → AskUserQuestion 选择器（最多3个 + Other）
   ├─ Step 1  判断当前阶段（A/B/C/D）
   │
-  ├─ Phase A  A.1确认需求 → A.2识别章节 → A.3靶向探索代码
+  ├─ Phase A  A.1确认需求（含用户补充）→ A.2识别章节
+  │           → A.3全量证据分析（spec/代码/DB/接口/日志/配置）
   │           → A.4改写+状态重置 → A.5新增T-xxx → A.6新增A-xxx
-  │           → A.7质量检查 + AskUserQuestion确认门
+  │           → A.7质量检查 → 先展示确认材料（前后对照或最新spec）
+  │           → AskUserQuestion 仅两项：确认通过 / 补充或澄清
+  │              · 确认通过：进入 Phase B
+  │              · 补充或澄清：回到 A.1 重新分析并更新 spec
   │
   ├─ Phase B  B.1依赖分析+执行计划 → B.2按批次并行执行
   │           → B.3偏差暂停 → B.4构建验证（参考CLAUDE.md）
@@ -201,22 +192,40 @@ cp templates/tech-spec-blank.md docs/plans/<module-name>/<feature>-tech-spec.md
 
 ---
 
+## 日常流程最小评估（建议）
+
+为观察当前“无 hook、仅流程约束”模式是否稳定，建议在真实项目中按以下 3 个场景做最小评估：
+
+- [ ] **场景 1：新需求进入 A 阶段并停在确认门**
+  - 期望行为：能完成 A.1~A.7，并在未确认前停留在 spec 确认，不进入开发
+  - 通过标准：出现确认材料展示 + AskUserQuestion 二选一；未出现任何代码修改动作
+  - 失败标准：未展示确认材料即进入开发，或未确认即发生代码修改
+- [ ] **场景 2：用户补充后回 A.1 重新分析**
+  - 期望行为：明确触发 know why / know how，回到分析阶段，更新 spec 后再次确认
+  - 通过标准：明确复述补充内容与新边界；流程回到 A.1~A.7 并重新确认
+  - 失败标准：跳过重新分析直接开发，或未将补充内容体现在 spec 变更中
+- [ ] **场景 3：确认通过后进入 B 阶段**
+  - 期望行为：仅在“确认通过，开始开发”后进入 Phase B，开始任务执行
+  - 通过标准：确认通过后才出现执行计划（B.1）与任务执行（B.2）
+  - 失败标准：确认前提前进入 B 阶段，或确认后仍停留 A 阶段无推进
+
+建议记录每个场景的结果（是否符合预期、偏差点、改进建议），连续观察一段时间后再决定是否恢复 hook。
+
+---
+
 ## FAQ
 
-**Q：已有项目初始化后，hook 会不会拦截所有现有代码修改？**
-A：不会。初始化后所有 baseline spec 的任务和验收项均为 ✅ 完成状态。只有当你开始新的变更（功能新增、Bug修复等）时，才会触发 Phase A 的 spec 更新要求。hook 只拦截"未更新 spec 的源文件修改"，现有代码不受影响。
+**Q：现在还有 hook 拦截吗？**
+A：默认不启用。当前版本先依赖 `/spec` 的阶段确认机制（spec 确认后再开发）来约束流程，便于你先观察真实执行效果。
 
-**Q：hook 在 macOS/Linux 上能用吗？**
-A：能。`hooks/check-spec-first.sh` 是跨平台 Bash 版，支持 Linux、macOS、Windows Git Bash / MSYS2 / MinGW。按平台选择对应脚本复制即可。
+**Q：macOS/Linux/Windows 现在还需要分别配置 hook 吗？**
+A：不需要。默认模板已移除 PreToolUse hook 配置，不再区分 Bash/PowerShell 的 hook 安装步骤。
 
-**Q：想临时跳过 hook 怎么办？**
-A：在 `.claude/settings.json` 中临时注释掉 hooks 配置，操作完成后恢复。
+**Q：后续想恢复 hook 怎么办？**
+A：可在项目 `.claude/settings.json` 重新添加 PreToolUse 配置，并恢复对应脚本后再启用。建议先观察一段时间流程执行数据，再决定是否回加。
 
 **Q：monorepo 多个子项目能用吗？**
-A：在每个子项目根目录分别放 `.doc-first.json`，各自的 `.claude/settings.json` 配置各自的 hook 路径。
-
-**Q：spec 已 commit 但本次想继续写代码，hook 会拦截吗？**
-A：会。hook 检查的是"当前 session 是否有 docs/plans/ 的未提交变更"。这是有意设计——每次准备写代码前，先在 spec 上确认状态（哪怕只更新一个任务状态），既确认 spec 是最新的，也开启了"允许编码"的通行证。
+A：可以。每个子项目根目录分别放 `.doc-first.json` 与 `docs/plans/`，各自独立使用 `/spec` 流程。
 
 **Q：/spec skill 如何知道构建命令和启动命令？**
 A：Phase B.4 和 Phase C.1 会读取项目 `CLAUDE.md` 中的"构建命令"和"启动与认证"章节。这两个章节是必填项，使用 `templates/CLAUDE.md-snippet.md` 中的片段并填写实际命令。
