@@ -35,14 +35,18 @@ extract_modules() {
     local current_submodule=""
 
     while IFS= read -r line; do
-        # 检测表格开始
-        if [[ "$line" =~ \|一.*级.*模.*块\| ]]; then
+        # 检测表格开始（包含“一级模块”列头）
+        if [[ "$line" == *"一级模块"* ]] && [[ "$line" == *"二级模块"* ]] && [[ "$line" == *"技术方案"* ]]; then
             in_table=1
             continue
         fi
-        # 检测表格结束（--- 分隔符或新的 ## 标题）
-        if [[ $in_table -eq 1 ]] && [[ "$line" =~ ^\|[-:\ ]+\| ]] || [[ "$line" =~ ^## ]]; then
+        # 检测表格结束（新的 ## 标题）
+        if [[ $in_table -eq 1 ]] && [[ "$line" =~ ^## ]]; then
             in_table=0
+            continue
+        fi
+        # 跳过表头分隔符，不结束表格
+        if [[ $in_table -eq 1 ]] && [[ "$line" =~ ^\|[-:\ ]+\|$ ]]; then
             continue
         fi
 
@@ -54,8 +58,8 @@ extract_modules() {
             fourth_col=$(echo "$line" | awk -F'|' '{print $5}' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
 
             # 一级模块（加粗数字编号开头）
-            if [[ "$first_col" =~ ^[0-9]+\.[[:space:]]  ]]; then
-                current_module="$second_col"
+            if [[ "$first_col" =~ ^[0-9]+\.[[:space:]]+ ]]; then
+                current_module=$(echo "$first_col" | sed -E 's/^[0-9]+\.[[:space:]]*//')
                 echo "MODULE:$current_module"
             # 二级模块（空第一列）
             elif [[ -z "$first_col" ]] && [[ -n "$second_col" ]]; then
@@ -187,24 +191,24 @@ SPECEOF
 echo "[generate-baseline-specs] 开始生成基线 spec..."
 echo "[generate-baseline-specs] 项目根目录：$(pwd)"
 
-# 提取并去重模块列表
-modules=$(extract_modules | grep "^MODULE:" | sed 's/^MODULE://' | sort -u)
+# 提取并去重模块列表（数组，避免空格拆词问题）
+mapfile -t modules < <(extract_modules | grep "^MODULE:" | sed 's/^MODULE://' | sort -u)
 
-if [[ -z "$modules" ]]; then
+if [[ ${#modules[@]} -eq 0 ]]; then
     echo "[generate-baseline-specs] 错误：未从 README.md 中提取到模块列表" >&2
     exit 1
 fi
 
-echo "[generate-baseline-specs] 发现 $(echo "$modules" | wc -l) 个模块"
+echo "[generate-baseline-specs] 发现 ${#modules[@]} 个模块"
 
-for module in $modules; do
+for module in "${modules[@]}"; do
     generate_module_spec "$module"
 done
 
 # ── 验证生成结果 ─────────────────────────────────────────────────────────────
 failed=0
-for module in $modules; do
-    local spec_file="docs/plans/${module}/${module}-tech-spec.md"
+for module in "${modules[@]}"; do
+    spec_file="docs/plans/${module}/${module}-tech-spec.md"
     if [[ ! -f "$spec_file" ]]; then
         echo "[generate-baseline-specs] 验证失败：$spec_file 未生成" >&2
         failed=1
@@ -220,4 +224,4 @@ if [[ $failed -eq 1 ]]; then
 fi
 
 echo "[generate-baseline-specs] 验证通过：所有文件生成成功"
-echo "[generate-baseline-specs] 完成，共生成 $(echo "$modules" | wc -l) 个模块的基线 spec"
+echo "[generate-baseline-specs] 完成，共生成 ${#modules[@]} 个模块的基线 spec"

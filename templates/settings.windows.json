@@ -6,8 +6,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash .claude/hooks/check-spec-first.sh",
-            "description": "Bash版：Linux/macOS/Git Bash/MSYS2 用户使用此配置"
+            "command": "powershell -NoProfile -File .claude/hooks/check-spec-first.ps1",
+            "description": "PowerShell版：Windows 原生 PowerShell 用户使用此配置"
           }
         ]
       }

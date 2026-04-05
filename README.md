@@ -43,6 +43,18 @@ doc-first-dev/
 
 ## 安装 — 选择你的场景
 
+### 环境依赖（安装前）
+
+- Bash 方案依赖：`bash`、`jq`、`git`
+- PowerShell 方案依赖：`powershell`、`git`
+
+可先自检：
+
+```bash
+jq --version
+git --version
+```
+
 ### 场景一：已有项目（有代码）
 
 已有项目需要先通过 `/spec-init` 从代码逆向生成技术方案基线，再开始日常开发。
@@ -103,8 +115,10 @@ cp examples/doc-first-java.json .doc-first.json  # Java/Maven 项目
 # 或
 cp templates/doc-first.json .doc-first.json       # 其他语言，修改 sourcePatterns
 
-# 复制并合并 settings
-cp templates/settings.json .claude/settings.json
+# 复制并合并 settings（按平台选择）
+cp templates/settings.json .claude/settings.json          # Linux/macOS/Git Bash
+# 或
+cp templates/settings.windows.json .claude/settings.json  # Windows PowerShell
 
 # 初始化文档目录
 mkdir -p docs/plans
