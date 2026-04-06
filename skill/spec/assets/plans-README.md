@@ -31,7 +31,7 @@
 | 七、验收项 | 验收前准备 + A-xxx 验收表，断言要求可执行可观测 |
 | 八、附录 | 枚举值、常量、固定测试数据 |
 
-新建 spec 时使用 `templates/tech-spec-blank.md` 骨架，或运行 `/spec <需求描述>` 选择"新建文档"自动生成。
+新建 spec 时使用 `~/.claude/skills/spec-init/assets/tech-spec-blank.md` 骨架，或运行 `/spec <需求描述>` 选择"新建文档"自动生成。
 
 ### T-xxx 任务格式
 

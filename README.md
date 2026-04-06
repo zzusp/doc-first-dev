@@ -32,10 +32,6 @@ doc-first-dev/
 │       │   └── tech-spec-blank.md         # 空白 8 节技术方案模板
 │       └── reference/
 │           └── languages.md              # 语言扫描规则参考
-├── templates/
-│   ├── settings.json                     # .claude/settings.json 模板
-│   └── dashboard/
-│       └── index.html                    # Spec 仪表盘（静态 HTML）
 └── examples/
     └── doc-first-java.json               # Java/Maven 项目配置示例
 ```
