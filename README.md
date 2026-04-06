@@ -10,6 +10,10 @@ doc-first-dev/
 ├── skill/
 │   ├── spec/
 │   │   └── SKILL.md                      # /spec skill（日常开发）
+│   ├── analyze/
+│   │   └── SKILL.md                      # /spec-analyze skill（只读分析）
+│   ├── search/
+│   │   └── SKILL.md                      # /spec-search skill（内容检索）
 │   ├── check/
 │   │   └── SKILL.md                      # /spec-check skill（健康检查）
 │   ├── audit/
@@ -41,6 +45,8 @@ doc-first-dev/
 | 组件 | 作用 |
 |---|---|
 | `/spec` skill | 驱动从需求到交付的完整周期（分析→更新spec→spec确认→开发→验收→收尾） |
+| `/spec-analyze` skill | 只读分析：代码审查、影响分析、问题诊断、方案评估，不修改任何文件 |
+| `/spec-search` skill | 在 docs/plans/ 下快速检索内容，定位模块、接口、字段或任务 |
 | `/spec-check` skill | 对技术方案文档执行健康检查，验证 spec 内部一致性与代码符合度 |
 | `/spec-audit` skill | 对全量 spec 执行结构健康度审计，快速识别空章节、孤立任务、状态不一致等问题；输出 JSON 数据供仪表盘使用 |
 | `/spec-dashboard` skill | 读取审计 JSON 数据，生成可浏览器打开的 HTML 仪表盘 |
