@@ -80,7 +80,19 @@ python3 --version  # 或 python --version
 cp -r skill/* ~/.claude/skills/
 ```
 
-**步骤 2：在项目中初始化**
+**步骤 2：复制 hooks 和模板到项目（只需一次）**
+
+```bash
+# 复制 spec 生成脚本到项目的 .claude/hooks/
+# /spec-init Step 3.4 依赖此脚本
+mkdir -p <your-project>/.claude/hooks
+cp hooks/generate-baseline-specs.py <your-project>/.claude/hooks/
+
+# 复制模板（dashboard 页面等依赖此目录）
+cp -r templates <your-project>/
+```
+
+**步骤 3：在项目中初始化**
 
 ```bash
 cd <your-project>
@@ -97,7 +109,7 @@ cd <your-project>
 
 > 初始化只运行一次。完成后即可进入日常 `/spec` 流程。
 
-**步骤 3：提交产物**
+**步骤 4：提交产物**
 
 ```bash
 git add .
@@ -116,7 +128,14 @@ git commit -m "初始化 doc-first 技术方案基线"
 cp -r skill/* ~/.claude/skills/
 ```
 
-**步骤 2：初始化文档与项目配置**
+**步骤 2：复制 hooks 脚本（为以后使用 /spec-init 准备）**
+
+```bash
+mkdir -p <your-project>/.claude/hooks
+cp hooks/generate-baseline-specs.py <your-project>/.claude/hooks/
+```
+
+**步骤 3：初始化文档与项目配置**
 
 ```bash
 cd <your-project>
@@ -131,11 +150,11 @@ mkdir -p docs/plans
 cp templates/plans-README.md docs/plans/README.md
 ```
 
-**步骤 3：更新 CLAUDE.md**
+**步骤 4：更新 CLAUDE.md**
 
 将 `templates/CLAUDE.md-snippet.md` 的内容追加到项目 `CLAUDE.md`，其中含 `<>` 占位符共 7 处（构建命令、启动时间、日志路径、认证命令、请求头等），请逐项填写后再继续。这些章节是必填的，`/spec` skill 的 Phase B.4 和 Phase C.1 会引用。
 
-**步骤 4：验证安装**
+**步骤 5：验证安装**
 
 ```
 /spec 测试安装是否正常
