@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Doc-First Spec Dashboard</title>
+  <style>
+    :root { --bg: #f8fafc; --card: #ffffff; --border: #e2e8f0; --text: #1e293b; --text-muted: #64748b; --accent: #3b82f6; --success: #22c55e; --warning: #f59e0b; --danger: #ef4444; --radius: 8px; --shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; padding: 24px; }
+    .container { max-width: 1200px; margin: 0 auto; }
+    .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+    .header h1 { font-size: 24px; font-weight: 600; }
+    .header .meta { color: var(--text-muted); font-size: 14px; }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .stat-card { background: var(--card); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); }
+    .stat-card .label { font-size: 14px; color: var(--text-muted); margin-bottom: 8px; }
+    .stat-card .value { font-size: 32px; font-weight: 700; }
+    .stat-card .value.success { color: var(--success); }
+    .stat-card .value.warning { color: var(--warning); }
+    .stat-card .value.danger { color: var(--danger); }
+    .stat-card .value.accent { color: var(--accent); }
+    .score-card { background: var(--card); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); margin-bottom: 24px; }
+    .score-header { display: flex; align-items: center; gap: 16px; }
+    .score-circle { width: 80px; height: 80px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 700; color: white; flex-shrink: 0; }
+    .score-circle.excellent { background: var(--success); }
+    .score-circle.good { background: var(--warning); }
+    .score-circle.poor { background: var(--danger); }
+    .score-info h2 { font-size: 20px; margin-bottom: 4px; }
+    .score-info p { color: var(--text-muted); font-size: 14px; }
+    .modules-section, .issues-section { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; margin-bottom: 24px; }
+    .section-header { padding: 16px 20px; border-bottom: 1px solid var(--border); font-weight: 600; }
+    .module-item { display: flex; align-items: center; padding: 16px 20px; border-bottom: 1px solid var(--border); gap: 16px; }
+    .module-item:last-child { border-bottom: none; }
+    .module-status { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .module-status.healthy { background: var(--success); }
+    .module-status.warning { background: var(--warning); }
+    .module-status.critical { background: var(--danger); }
+    .module-info { flex: 1; min-width: 0; }
+    .module-name { font-weight: 500; }
+    .module-path { font-size: 13px; color: var(--text-muted); }
+    .module-stats { display: flex; gap: 16px; font-size: 13px; color: var(--text-muted); }
+    .badge { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: 500; }
+    .badge.success { background: #dcfce7; color: #166534; }
+    .badge.warning { background: #fef3c7; color: #92400e; }
+    .badge.danger { background: #fee2e2; color: #991b1b; }
+    .issue-item { padding: 16px 20px; border-bottom: 1px solid var(--border); }
+    .issue-item:last-child { border-bottom: none; }
+    .issue-header { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+    .issue-type { font-size: 13px; font-weight: 500; padding: 2px 8px; border-radius: 4px; }
+    .issue-type.empty, .issue-type.inconsistent { background: #fee2e2; color: #991b1b; }
+    .issue-type.orphan, .issue-type.dangling { background: #fef3c7; color: #92400e; }
+    .issue-desc { font-size: 14px; color: var(--text-muted); padding-left: 28px; }
+    .empty-state { text-align: center; padding: 48px; color: var(--text-muted); }
+    .empty-state .icon { font-size: 48px; margin-bottom: 16px; }
+    .footer { margin-top: 24px; text-align: center; color: var(--text-muted); font-size: 13px; }
+    .footer a { color: var(--accent); text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header"><h1>Spec Dashboard</h1><div class="meta"><div>Last updated: <span id="last-updated">-</span></div><div>Project: <span id="project-root">-</span></div></div></div>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="label">Total Modules</div><div class="value accent" id="total-modules">-</div></div>
+      <div class="stat-card"><div class="label">Healthy</div><div class="value success" id="healthy-modules">-</div></div>
+      <div class="stat-card"><div class="label">Warnings</div><div class="value warning" id="warning-modules">-</div></div>
+      <div class="stat-card"><div class="label">Critical</div><div class="value danger" id="critical-modules">-</div></div>
+      <div class="stat-card"><div class="label">Pending Tasks</div><div class="value" id="pending-tasks">-</div></div>
+      <div class="stat-card"><div class="label">Pending Assertions</div><div class="value" id="pending-assertions">-</div></div>
+    </div>
+    <div class="score-card"><div class="score-header"><div class="score-circle" id="score-circle">-</div><div class="score-info"><h2 id="score-label">Loading...</h2><p id="score-desc">Parsing spec data...</p></div></div></div>
+    <div class="modules-section"><div class="section-header">Module List</div><div id="module-list"><div class="empty-state"><div class="icon">[...]</div><div>No module data</div><div style="font-size:13px;margin-top:8px;">Run /spec-audit to generate data</div></div></div></div>
+    <div class="issues-section"><div class="section-header">Issues</div><div id="issue-list"><div class="empty-state"><div class="icon">[OK]</div><div>No issues found</div></div></div></div>
+    <div class="footer">Generated by <a href="https://github.com/zzusp/doc-first-dev">doc-first-dev</a></div>
+  </div>
+  <script id="spec-data" type="application/json"><!--SPEC_DATA--></script>
+  <script>
+    var d=document.getElementById("spec-data"),r=d.textContent.trim();
+    if(r&&r!=="<!--SPEC_DATA-->"){try{var D=JSON.parse(r);renderDashboard(D);}catch(e){console.error("Parse error:",e);}}
+    function renderDashboard(data){
+      document.getElementById("total-modules").textContent=data.totalModules||0;
+      document.getElementById("healthy-modules").textContent=data.healthyModules||0;
+      document.getElementById("warning-modules").textContent=data.warningModules||0;
+      document.getElementById("critical-modules").textContent=data.criticalModules||0;
+      document.getElementById("pending-tasks").textContent=data.pendingTasks||0;
+      document.getElementById("pending-assertions").textContent=data.pendingAssertions||0;
+      var score=data.score||0,sc=document.getElementById("score-circle"),sl=document.getElementById("score-label"),sd=document.getElementById("score-desc");
+      sc.textContent=score;
+      if(score>=90){sc.className="score-circle excellent";sl.textContent="Excellent";sd.textContent="All specs are healthy";}
+      else if(score>=70){sc.className="score-circle good";sl.textContent="Good";sd.textContent="Minor warnings, consider fixing";}
+      else{sc.className="score-circle poor";sl.textContent="Needs Improvement";sd.textContent="Critical issues found";}
+      var ml=document.getElementById("module-list");
+      if(data.modules&&data.modules.length>0){var h="";for(var i=0;i<data.modules.length;i++){var m=data.modules[i];var st=m.status==="healthy"?"healthy":m.status==="warning"?"warning":"critical";var bc=m.status==="healthy"?"success":m.status==="warning"?"warning":"danger";var bt=m.status==="healthy"?"OK":m.status==="warning"?"Warning":"Critical";h+="<div class=\"module-item\"><div class=\"module-status "+st+"\"></div><div class=\"module-info\"><div class=\"module-name\">"+escape(m.name)+"</div><div class=\"module-path\">"+escape(m.path)+"</div></div><div class=\"module-stats\"><span>T: "+m.taskDone+"/"+m.taskTotal+"</span><span>A: "+m.assertDone+"/"+m.assertTotal+"</span></div><span class=\"badge "+bc+"\">"+bt+(m.issueCount>0?" - "+m.issueCount+" issues":"")+"</span></div>";}ml.innerHTML=h;}
+      var il=document.getElementById("issue-list");
+      if(data.issues&&data.issues.length>0){var tl={empty:"Empty Section",orphan:"Orphan Task",dangling:"Dangling Assertion",inconsistent:"Inconsistent State"};var h="";for(var i=0;i<data.issues.length;i++){var iss=data.issues[i];h+="<div class=\"issue-item\"><div class=\"issue-header\"><span class=\"issue-type "+iss.type+"\">"+(tl[iss.type]||iss.type)+"</span><strong>"+escape(iss.module)+"</strong></div><div class=\"issue-desc\">"+escape(iss.description)+"</div></div>";}il.innerHTML=h;}
+      document.getElementById("last-updated").textContent=data.timestamp||new Date().toLocaleString();
+      document.getElementById("project-root").textContent=data.projectRoot||"";
+    }
+    function escape(t){var d=document.createElement("div");d.textContent=t||"";return d.innerHTML;}
+  </script>
+</body>
+</html>

@@ -53,7 +53,7 @@ description: 读取 /spec-audit 生成的 JSON 数据，生成可浏览器打开
 
 ### 1.1 读取模板
 
-读取 `templates/dashboard/index.html` 作为基础模板。
+读取本 skill 目录下的 `assets/dashboard/index.html` 作为基础模板。
 
 若模板不存在，输出提示后尝试使用内嵌的简化模板。
 
