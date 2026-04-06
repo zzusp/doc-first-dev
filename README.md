@@ -133,7 +133,7 @@ cp templates/plans-README.md docs/plans/README.md
 
 **步骤 3：更新 CLAUDE.md**
 
-将 `templates/CLAUDE.md-snippet.md` 的内容粘贴到项目 `CLAUDE.md`，填写构建命令和启动/认证命令。这两个章节是必填的，`/spec` skill 的 Phase B.4 和 Phase C.1 会引用。
+将 `templates/CLAUDE.md-snippet.md` 的内容追加到项目 `CLAUDE.md`，其中含 `<>` 占位符共 7 处（构建命令、启动时间、日志路径、认证命令、请求头等），请逐项填写后再继续。这些章节是必填的，`/spec` skill 的 Phase B.4 和 Phase C.1 会引用。
 
 **步骤 4：验证安装**
 
