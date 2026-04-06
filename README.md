@@ -10,17 +10,17 @@ doc-first-dev/
 ├── skill/
 │   ├── spec/
 │   │   └── SKILL.md                      # /spec skill（日常开发）
-│   ├── analyze/
+│   ├── spec-analyze/
 │   │   └── SKILL.md                      # /spec-analyze skill（只读分析）
-│   ├── search/
+│   ├── spec-search/
 │   │   └── SKILL.md                      # /spec-search skill（内容检索）
-│   ├── check/
+│   ├── spec-check/
 │   │   └── SKILL.md                      # /spec-check skill（健康检查）
-│   ├── audit/
+│   ├── spec-audit/
 │   │   └── SKILL.md                      # /spec-audit skill（全局健康度审计）
-│   ├── dashboard/
+│   ├── spec-dashboard/
 │   │   └── SKILL.md                      # /spec-dashboard skill（仪表盘生成）
-│   └── init/
+│   └── spec-init/
 │       ├── SKILL.md                      # /spec-init skill（已有项目初始化）
 │       └── reference/
 │           └── languages.md              # 语言扫描规则参考
