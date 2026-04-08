@@ -8,7 +8,7 @@
 
 ```bash
 # 填写项目的构建/编译/类型检查命令
-# /spec skill 的 Phase B.4 构建验证会引用此处
+# /spec-first skill 的 Phase B.4 构建验证会引用此处
 
 # Java/Maven 示例：
 # JAVA_HOME="/path/to/jdk" mvn compile -q
@@ -26,7 +26,7 @@
 
 ## 启动与认证
 
-> /spec skill 的 Phase C.1 验收准备会引用此处。
+> /spec-first skill 的 Phase C.1 验收准备会引用此处。
 
 ### 启动应用
 
@@ -62,9 +62,9 @@
 
 ## 文档驱动开发规则
 
-本项目启用文档先行（doc-first）开发规范，由 `/spec` skill 驱动：
+本项目启用文档先行（doc-first）开发规范，由 `/spec-first` skill 驱动：
 
-1. 任何需求变更、功能新增、Bug 修复，必须先运行 `/spec <需求描述>` 更新技术方案，再开始编码。
+1. 任何需求变更、功能新增、Bug 修复，必须先运行 `/spec-first <需求描述>` 更新技术方案，再开始编码。
 2. 技术方案文档位于 `docs/plans/`，模块索引见 `docs/plans/README.md`。
 3. spec 文档记录**当前状态**，不记录变更历史——直接改写旧内容。
 4. spec 更新和代码变更放在同一次 git commit 中。
