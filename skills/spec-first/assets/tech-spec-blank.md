@@ -129,11 +129,9 @@ is_deleted                        — 软删标记
 
 ## 六、任务状态
 
-| 编号 | 内容 | 优先级 | 状态 |
-|---|---|---|---|
-| T-01 | 在 `XxxMapper.xml` `selectPageList` 追加 xxx 条件；更新 `XxxMapper.java` 方法签名 | P0 | 待开始 |
+- T-01 · P0 · 待开始 — 在 `XxxMapper.xml` `selectPageList` 追加 xxx 条件；更新 `XxxMapper.java` 方法签名
 
-> P0 = 阻塞，P1 = 重要，P2 = 可选。取消时保留行并注明原因。
+> 格式：`- T-xx · P0/P1/P2 · 状态 — 内容（文件 + 方法）`。P0 = 阻塞，P1 = 重要，P2 = 可选。取消时保留行并注明原因。
 
 ---
 
@@ -160,9 +158,9 @@ is_deleted                        — 软删标记
 
 #### Phase 1：功能验收
 
-| 编号 | 接口 | 验证点 | 状态 |
-|---|---|---|---|
-| A-01 | `POST /xxx/list` | 传 `field=value`，返回 `total>0`，所有结果满足条件 | 待验证 |
+- A-01 · `POST /xxx/list` · 待验证 — 传 `field=value`，返回 `total>0`，所有结果满足条件
+
+<!-- 格式：`- A-xx · 接口 · 状态 — 具体断言（请求参数 + 预期响应）` -->
 
 ### 7.3 非功能验收
 
