@@ -1,173 +1,152 @@
-# Doc-First Dev — 文档驱动开发框架
+# Doc-First Dev
 
-将"文档先行"开发规范抽象为可在任意项目复用的工具集。
+**English:** Reusable **Agent Skills** for doc-first delivery — structured specs under `docs/plans/`, phased workflow from analysis to sign-off, plus optional **decision logging**. Works with agents listed on the [Agent Skills Directory](https://skills.sh/) (Claude Code, Cursor, Codex, and others that load skill folders).
 
-## 包含内容
+**中文：** 将「文档先行」固化成可安装的 **Skills + 模板**：用技术方案驱动分析、开发、验收与收尾，并用决策日志沉淀「为什么这样做」。
+
+| Skill 名称（`SKILL.md`） | 典型触发 | 一句话 |
+|---|---|---|
+| **`spec-first`** | `/spec-first <需求或变更描述>` | 全周期：匹配 spec → 更新方案 → 确认门 → 开发 → 验收 → 收尾 |
+| **`whylog-record`** | 任务完成后主动记录 | 把决策与替代方案追加到 `docs/decisions/log.md` |
+
+**许可证：** [MIT](LICENSE)  
+**源码：** [github.com/zzusp/doc-first-dev](https://github.com/zzusp/doc-first-dev)
+
+---
+
+## 通过 [skills.sh](https://skills.sh/) 安装（推荐）
+
+官方 CLI 为 [vercel-labs/skills](https://github.com/vercel-labs/skills)（文档见 [skills.sh/docs](https://skills.sh/docs)）。**命令是 `npx skills add`（`skills` 与 `add` 之间有空格）**，不是 `skillsadd`。
+
+```bash
+# 安装到当前项目或交互选择 Agent（默认行为以 CLI 提示为准）
+npx skills add zzusp/doc-first-dev
+
+# 仅查看本仓库提供哪些 skill（不安装）
+npx skills add zzusp/doc-first-dev --list
+
+# 只装其中一个，并装到全局（示例：Claude Code）
+npx skills add zzusp/doc-first-dev --skill spec-first -g -a claude-code -y
+```
+
+本仓库在 `skills/` 下包含 **`spec-first`** 与 **`whylog-record`** 两个 skill，CLI 会分别安装到各 Agent 约定的 skills 目录。
+
+### 「发布」到 skills.sh 榜单：你需要知道的事
+
+**没有单独的「提交上架」表单。** [skills.sh 文档](https://skills.sh/docs) 说明：榜单依据 **匿名安装统计**（用户执行 `npx skills add <owner/repo>` 时由 CLI 上报，不收集个人信息）。因此「发布」= **保持 GitHub 仓库公开** + **把安装命令写进 README / 社交传播**，让别人愿意安装；安装次数会反映在排行榜上。
+
+建议顺带做的几件事：
+
+1. **推送最新代码到 `main`**，保证 GitHub 上的 `SKILL.md` 与描述为当前版本。  
+2. 在 GitHub 仓库 **About** 里加 **Topics**，例如：`agent-skills`、`claude-code`、`cursor`、`doc-first`、`skills`，方便被发现。  
+3. `npx skills find <关键词>` 的收录范围以 CLI 实现为准；新仓库可能需要一定传播与安装后才会在搜索里更容易看到。
+
+---
+
+## 手动安装（任意 Agent）
+
+将本仓库的 `skills/` 下各 skill 目录复制到 Agent 的全局或项目 skills 目录（例如 Claude Code 常用 `~/.claude/skills/`；Cursor 等以各产品文档为准）。
+
+```bash
+# macOS / Linux
+cp -r skills/* ~/.claude/skills/
+```
+
+```powershell
+# Windows PowerShell（在 clone 后的仓库根目录的上一级执行，或把路径改成你的本地根目录）
+git clone https://github.com/zzusp/doc-first-dev.git
+Copy-Item -Path ".\doc-first-dev\skills\*" -Destination "$env:USERPROFILE\.claude\skills\" -Recurse -Force
+```
+
+安装后在业务项目根目录使用 `/spec-first …`（或当前产品约定的 skill 调用方式）。
+
+---
+
+## 仓库里有什么
 
 ```
 doc-first-dev/
-├── README.md                              # 本文件
+├── README.md
+├── LICENSE
 ├── skills/
-│   ├── spec-first/                       ★ 核心：文档驱动开发周期
-│   │   ├── SKILL.md                      # /spec-first skill（日常开发）
-│   │   ├── error-handling.md             # 异常处理规则（按需加载）
-│   │   └── assets/
-│   │       ├── CLAUDE.md-snippet.md      # 粘贴到项目 CLAUDE.md 的片段
-│   │       ├── plans-PROJECT.md          # docs/plans/PROJECT.md 项目索引模板
-│   │       ├── api-blank.md              # 接口章节空白模板
-│   │       └── tech-spec-blank.md        # 8 节技术方案空白模板
-│   └── whylog-record/                    ★ 核心：记录开发决策
-│       └── SKILL.md                      # /whylog-record skill（记录开发决策）
+│   ├── spec-first/                 ★ 文档驱动全周期
+│   │   ├── SKILL.md                # 入口、进度 Checklist、前置检查
+│   │   ├── init.md                 # 无 PROJECT.md 时初始化索引
+│   │   ├── step0.md
+│   │   ├── phase-a.md … phase-d.md
+│   │   ├── error-handling.md
+│   │   ├── assets/                 # CLAUDE 片段、PROJECT/spec/API 模板
+│   │   └── evals/                  # 可选评测场景说明
+│   └── whylog-record/              ★ 决策记录
+│       └── SKILL.md
 └── reference/
-    └── best-practices.md                 # Skill 编写最佳实践（Anthropic 官方指南）
+    └── best-practices.md           # Skill 编写参考
 ```
 
 ---
 
-## 核心机制
+## 为什么需要两套 Skill
 
-> **两个核心技能：**
-> - **`/spec-first`** — 维护项目的**当前状态**：需求边界、技术设计、架构，驱动从需求到交付的完整开发周期
-> - **`/whylog-record`** — 记录到达这个状态的**过程**：决策依据、方案选择、需求演变
->
-> 两者互补，共同构成完整的项目知识库。
+| 维度 | **`spec-first`** | **`whylog-record`** |
+|---|---|---|
+| 回答的问题 | 项目**现在应该怎样**（需求、设计、任务、验收） | 我们是**如何走到这一步**的（决策、取舍、演变） |
+| 主要产出 | `docs/plans/` 下的 spec 与索引 | `docs/decisions/log.md` |
 
-| 组件 | 作用 |
-|---|---|
-| **`/spec-first` skill** ★ | 驱动从需求到交付的完整周期（分析→更新spec→spec确认→开发→验收→收尾） |
-| **`/whylog-record` skill** ★ | 记录开发过程中的决策依据、方案选择和需求变更，追加到 docs/decisions/log.md |
+两者一起用，更接近「可维护的文档化知识库」，而不是一次性生成的说明文。
 
 ---
 
-## 安装 — 选择你的场景
+## 新项目最小落地
 
-### 环境依赖（安装前）
-
-- 基础依赖：`git`
-
-### 场景一：已有项目（有代码）
-
-**步骤 1：安装 skills（全局，一次性）**
-
-```bash
-cp -r skills/* ~/.claude/skills/
-```
-
-**步骤 2：直接开始**
-
-```bash
-cd <your-project>
-/spec-first <需求描述>
-```
-
-skill 会在 `docs/plans/` 下自动查找或创建 spec，直接进入开发周期。
+1. **安装 skills**（见上节）。
+2. 在目标项目中准备 `docs/plans/`（若缺失，部分流程会先由 `init.md` 生成 `PROJECT.md`，仍建议目录预先存在）。
+3. 将 `spec-first/assets/CLAUDE.md-snippet.md` 合并进项目 `CLAUDE.md`，填好**构建**与**启动/认证**等与 Phase B.4、C.1 相关的段落。
+4. 验证：`/spec-first` + 一句测试需求，应出现文档匹配或初始化提示。
 
 ---
 
-### 场景二：新项目（无代码）
+## 日常流程（概览）
 
-新项目无需已有代码，直接安装后即可使用。
-
-**步骤 1：安装 skills（全局，一次性）**
-
-```bash
-cp -r skills/* ~/.claude/skills/
-```
-
-**步骤 2：初始化文档目录**
-
-```bash
-cd <your-project>
-mkdir -p docs/plans
-cp ~/.claude/skills/spec-first/assets/plans-PROJECT.md docs/plans/PROJECT.md
-```
-
-**步骤 3：更新 CLAUDE.md**
-
-将 `~/.claude/skills/spec-first/assets/CLAUDE.md-snippet.md` 的内容追加到项目 `CLAUDE.md`，其中含 `<>` 占位符共 7 处（构建命令、启动时间、日志路径、认证命令、请求头等），请逐项填写后再继续。这些章节是必填的，`/spec-first` skill 的 Phase B.4 和 Phase C.1 会引用。
-
-**步骤 4：验证安装**
-
-```
-/spec-first 测试安装是否正常
-```
-
-应看到文档选择器弹出。当前版本默认不启用 PreToolUse 拦截，先按 `/spec-first` 流程观察执行效果。
-
----
-
-## 日常开发流程
+触发 `spec-first` 后应维护 **开发周期进度 Checklist**；阶段细节以仓库内 `step0.md`、`phase-a.md`～`phase-d.md` 为准。
 
 ```
 /spec-first <需求描述>
-  │
-  ├─ Step 0  匹配文档 → AskUserQuestion 选择器（最多3个 + Other）
-  ├─ Step 1  判断当前阶段（A/B/C/D）
-  │
-  ├─ Phase A  A.1确认需求（含用户补充）→ A.2识别章节
-  │           → A.3全量证据分析（spec/代码/DB/接口/日志/配置）
-  │           → A.4改写+状态重置 → A.5新增T-xxx → A.6新增A-xxx
-  │           → A.7质量检查 → 先展示确认材料（前后对照或最新spec）
-  │           → AskUserQuestion 仅两项：确认通过 / 补充或澄清
-  │              · 确认通过：进入 Phase B
-  │              · 补充或澄清：回到 A.1 重新分析并更新 spec
-  │
-  ├─ Phase B  B.1依赖分析+执行计划 → B.2按批次并行执行
-  │           → B.3偏差暂停 → B.4构建验证（参考CLAUDE.md）
-  │
-  ├─ Phase C  C.1启动+获取认证（参考CLAUDE.md）
-  │           → C.2逐条执行A-xxx → C.3失败修复 → C.4非功能验收
-  │
-  └─ Phase D  D.1一致性检查 → D.2交付简报
+  ├─ 前置：无 PROJECT.md → init → Step 0
+  ├─ Step 0：文档匹配（选择器 + Other / 新建）
+  ├─ Step 1：判定 A/B/C/D → 读取对应 phase 文档
+  ├─ Phase A：分析并更新 spec → 确认门
+  ├─ Phase B：计划与实现 → 构建验证（CLAUDE.md）
+  ├─ Phase C：启动/认证 → 验收项
+  └─ Phase D：一致性 → 交付简报
 ```
 
-## 新建模块
-
-运行 `/spec-first <需求>` 选择"Other → 新建文档"，skill 会自动使用标准 8 节骨架创建空白 spec。
-
-或手动：
-
-```bash
-mkdir -p docs/plans/<module-name>
-cp ~/.claude/skills/spec-first/assets/tech-spec-blank.md docs/plans/<module-name>/<feature>-tech-spec.md
-```
+**新建模块：** 在 `/spec-first` 中选「Other → 新建文档」，或复制 `assets/tech-spec-blank.md` 到 `docs/plans/<module>/`。
 
 ---
 
-## 日常流程最小评估（建议）
+## 流程健康度自检（建议）
 
-为观察当前“无 hook、仅流程约束”模式是否稳定，建议在真实项目中按以下 3 个场景做最小评估：
+- 新需求是否在 **未确认 spec 前**不擅自改代码？
+- 用户补充需求后，是否 **回到分析**并再次确认？
+- 是否在 **明确确认通过** 后才进入开发与任务执行？
 
-- [ ] **场景 1：新需求进入 A 阶段并停在确认门**
-  - 期望行为：能完成 A.1~A.7，并在未确认前停留在 spec 确认，不进入开发
-  - 通过标准：出现确认材料展示 + AskUserQuestion 二选一；未出现任何代码修改动作
-  - 失败标准：未展示确认材料即进入开发，或未确认即发生代码修改
-- [ ] **场景 2：用户补充后回 A.1 重新分析**
-  - 期望行为：明确触发 know why / know how，回到分析阶段，更新 spec 后再次确认
-  - 通过标准：明确复述补充内容与新边界；流程回到 A.1~A.7 并重新确认
-  - 失败标准：跳过重新分析直接开发，或未将补充内容体现在 spec 变更中
-- [ ] **场景 3：确认通过后进入 B 阶段**
-  - 期望行为：仅在“确认通过，开始开发”后进入 Phase B，开始任务执行
-  - 通过标准：确认通过后才出现执行计划（B.1）与任务执行（B.2）
-  - 失败标准：确认前提前进入 B 阶段，或确认后仍停留 A 阶段无推进
-
-建议记录每个场景的结果（是否符合预期、偏差点、改进建议），连续观察一段时间后再决定是否恢复 hook。
+更细场景见 `skills/spec-first/evals/`。
 
 ---
 
 ## FAQ
 
-**Q：现在还有 hook 拦截吗？**
-A：默认不启用。当前版本先依赖 `/spec-first` 的阶段确认机制（spec 确认后再开发）来约束流程，便于你先观察真实执行效果。
+**Q：还依赖 PreToolUse hook 吗？**  
+A：默认不启用；以 skill 内阶段与确认门为主，需要时可自行在 `.claude/settings` 等配置中恢复 hook。
 
-**Q：macOS/Linux/Windows 现在还需要分别配置 hook 吗？**
-A：不需要。默认模板已移除 PreToolUse hook 配置，不再区分 Bash/PowerShell 的 hook 安装步骤。
+**Q：monorepo 多包怎么用？**  
+A：每个子项目根目录各自维护 `docs/plans/` 即可。
 
-**Q：后续想恢复 hook 怎么办？**
-A：可在项目 `.claude/settings.json` 重新添加 PreToolUse 配置，并恢复对应脚本后再启用。建议先观察一段时间流程执行数据，再决定是否回加。
+**Q：构建/启动命令从哪里来？**  
+A：`spec-first` 的 B.4 / C.1 会读项目 `CLAUDE.md` 中由片段模板约定的章节。
 
-**Q：monorepo 多个子项目能用吗？**
-A：可以。每个子项目根目录分别放 `docs/plans/`，各自独立使用 `/spec-first` 流程。
+**Q：模块索引文件叫什么？**  
+A：默认识别 `docs/plans/PROJECT.md`；若你在 `CLAUDE.md` 里约定了别的索引路径，以约定为准。
 
-**Q：/spec-first skill 如何知道构建命令和启动命令？**
-A：Phase B.4 和 Phase C.1 会读取项目 `CLAUDE.md` 中的"构建命令"和"启动与认证"章节。这两个章节是必填项，使用 `~/.claude/skills/spec-first/assets/CLAUDE.md-snippet.md` 中的片段并填写实际命令。
+**Q：和 [skills.sh](https://skills.sh/) 上其他 skill 的关系？**  
+A：本仓库专注 **doc-first 交付与决策记录**；可与目录中的其他能力（测试、设计系统等）并列安装，由 Agent 按描述与上下文选用。
