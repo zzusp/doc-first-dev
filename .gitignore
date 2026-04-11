@@ -1,0 +1,2 @@
+# 本地 Claude 配置（含个人密钥/路径，不纳入版本管理）
+.claude/settings.local.json

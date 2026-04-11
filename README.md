@@ -13,30 +13,14 @@ doc-first-dev/
 │   │   ├── error-handling.md             # 异常处理规则（按需加载）
 │   │   └── assets/
 │   │       ├── CLAUDE.md-snippet.md      # 粘贴到项目 CLAUDE.md 的片段
-│   │       ├── plans-PROJECT.md         # docs/plans/PROJECT.md 项目索引模板
-│   │       └── doc-first.json           # .doc-first.json 项目配置模板
-│   ├── spec-analyze/
-│   │   └── SKILL.md                      # /spec-analyze skill（只读分析）
-│   ├── spec-search/
-│   │   └── SKILL.md                      # /spec-search skill（内容检索）
-│   ├── spec-check/
-│   │   └── SKILL.md                      # /spec-check skill（健康检查）
-│   ├── spec-audit/
-│   │   └── SKILL.md                      # /spec-audit skill（全局健康度审计）
-│   ├── spec-dashboard/
-│   │   └── SKILL.md                      # /spec-dashboard skill（仪表盘生成）
-│   ├── spec-init/
-│   │   ├── SKILL.md                      # /spec-init skill（已有项目初始化）
-│   │   ├── assets/
-│   │   │   ├── generate-baseline-specs.py  # Spec 生成脚本
-│   │   │   ├── plans-PROJECT.md           # 项目索引模板
-│   │   │   └── tech-spec-blank.md         # 空白 8 节技术方案模板
-│   │   └── reference/
-│   │       └── languages.md              # 语言扫描规则参考
-│   ├── whylog-record/                    ★ 核心：记录开发决策
-│   │   └── SKILL.md                      # /whylog-record skill（记录开发决策）
-│   └── whylog-review/
-│       └── SKILL.md                      # /whylog-review skill（查询决策历史）
+│   │       ├── plans-PROJECT.md          # docs/plans/PROJECT.md 项目索引模板
+│   │       ├── api-blank.md              # 接口章节空白模板
+│   │       └── tech-spec-blank.md        # 8 节技术方案空白模板
+│   └── whylog-record/                    ★ 核心：记录开发决策
+│       └── SKILL.md                      # /whylog-record skill（记录开发决策）
+├── reference/
+│   ├── demo-tech-spec.md                 # 完整技术方案示例
+│   └── demo-openapi.md                   # 完整 OpenAPI 文档示例
 └── examples/
     └── doc-first-java.json               # Java/Maven 项目配置示例
 ```
@@ -54,16 +38,7 @@ doc-first-dev/
 | 组件 | 作用 |
 |---|---|
 | **`/spec-first` skill** ★ | 驱动从需求到交付的完整周期（分析→更新spec→spec确认→开发→验收→收尾） |
-| `/spec-analyze` skill | 只读分析：代码审查、影响分析、问题诊断、方案评估，不修改任何文件 |
-| `/spec-search` skill | 在 docs/plans/ 下快速检索内容，定位模块、接口、字段或任务 |
-| `/spec-check` skill | 对技术方案文档执行健康检查，验证 spec 内部一致性与代码符合度 |
-| `/spec-audit` skill | 对全量 spec 执行结构健康度审计，快速识别空章节、孤立任务、状态不一致等问题；输出 JSON 数据供仪表盘使用 |
-| `/spec-dashboard` skill | 读取审计 JSON 数据，生成可浏览器打开的 HTML 仪表盘 |
-| `/spec-init` skill | 已有项目的初始化：从代码逆向生成技术方案基线 |
 | **`/whylog-record` skill** ★ | 记录开发过程中的决策依据、方案选择和需求变更，追加到 docs/decisions/log.md |
-| `/whylog-review` skill | 按需查询和分析项目历史决策日志，支持主题检索、进展总结、过时识别 |
-| `.doc-first.json` | 每个项目的配置文件，声明源码路径匹配规则与文档目录约定 |
-| 仪表盘 | 静态 HTML 页面，展示模块进度、健康度评分和问题列表（由 /spec-dashboard 生成） |
 
 ---
 
@@ -72,18 +47,8 @@ doc-first-dev/
 ### 环境依赖（安装前）
 
 - 基础依赖：`git`
-- 初始化脚本依赖：`python3` 或 `python`（用于生成 baseline spec）
-
-可先自检：
-
-```bash
-git --version
-python3 --version  # 或 python --version
-```
 
 ### 场景一：已有项目（有代码）
-
-已有项目需要先通过 `/spec-init` 从代码逆向生成技术方案基线，再开始日常开发。
 
 **步骤 1：安装 skills（全局，一次性）**
 
@@ -91,35 +56,20 @@ python3 --version  # 或 python --version
 cp -r skills/* ~/.claude/skills/
 ```
 
-**步骤 2：在项目中初始化**
+**步骤 2：直接开始**
 
 ```bash
 cd <your-project>
-
-# 在项目根目录运行
-/spec-init
+/spec-first <需求描述>
 ```
 
-`/spec-init` 会自动：
-1. 分析代码结构，生成功能清单草稿
-2. 请你确认功能清单
-3. 为每个模块生成 baseline spec
-4. 输出 `docs/plans/init-report.md`
-
-> 初始化只运行一次。完成后即可进入日常 `/spec-first` 流程。
-
-**步骤 3：提交产物**
-
-```bash
-git add .
-git commit -m "初始化 doc-first 技术方案基线"
-```
+skill 会在 `docs/plans/` 下自动查找或创建 spec，直接进入开发周期。
 
 ---
 
 ### 场景二：新项目（无代码）
 
-新项目无需初始化，直接安装后即可使用。
+新项目无需已有代码，直接安装后即可使用。
 
 **步骤 1：安装 skills（全局，一次性）**
 
@@ -134,8 +84,7 @@ cd <your-project>
 
 # 复制项目配置（Java/Maven 项目）
 cp examples/doc-first-java.json .doc-first.json
-# 其他语言：
-cp ~/.claude/skills/spec-first/assets/doc-first.json .doc-first.json
+# 其他语言：参考下方 .doc-first.json 配置参数手动创建
 
 # 初始化文档目录
 mkdir -p docs/plans
@@ -206,7 +155,7 @@ cp ~/.claude/skills/spec-first/assets/plans-PROJECT.md docs/plans/PROJECT.md
   ├─ Phase C  C.1启动+获取认证（参考CLAUDE.md）
   │           → C.2逐条执行A-xxx → C.3失败修复 → C.4非功能验收
   │
-  └─ Phase D  D.1一致性检查 → D.2交付简报 → D.3运行 /whylog-record 记录决策
+  └─ Phase D  D.1一致性检查 → D.2交付简报
 ```
 
 ## 新建模块
@@ -217,7 +166,7 @@ cp ~/.claude/skills/spec-first/assets/plans-PROJECT.md docs/plans/PROJECT.md
 
 ```bash
 mkdir -p docs/plans/<module-name>
-cp templates/tech-spec-blank.md docs/plans/<module-name>/<feature>-tech-spec.md
+cp ~/.claude/skills/spec-first/assets/tech-spec-blank.md docs/plans/<module-name>/<feature>-tech-spec.md
 ```
 
 ---
@@ -258,4 +207,4 @@ A：可在项目 `.claude/settings.json` 重新添加 PreToolUse 配置，并恢
 A：可以。每个子项目根目录分别放 `.doc-first.json` 与 `docs/plans/`，各自独立使用 `/spec-first` 流程。
 
 **Q：/spec-first skill 如何知道构建命令和启动命令？**
-A：Phase B.4 和 Phase C.1 会读取项目 `CLAUDE.md` 中的"构建命令"和"启动与认证"章节。这两个章节是必填项，使用 `templates/CLAUDE.md-snippet.md` 中的片段并填写实际命令。
+A：Phase B.4 和 Phase C.1 会读取项目 `CLAUDE.md` 中的"构建命令"和"启动与认证"章节。这两个章节是必填项，使用 `~/.claude/skills/spec-first/assets/CLAUDE.md-snippet.md` 中的片段并填写实际命令。
