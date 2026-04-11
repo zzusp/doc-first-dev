@@ -8,12 +8,18 @@ _Commit: `e1d8b85` · By: zzusp_
 
 ## 2026-04-12 — README 写明 GitHub 坐标
 
-`git remote` 已为 `zzusp/doc-first-dev`：README 中 `npx skillsadd` 与手动安装示例改为使用该 owner/repo，并增加源码链接；PowerShell 示例改为 clone 后相对路径 `.\doc-first-dev\skills\*`，避免写死本机盘符。
+`git remote` 已为 `zzusp/doc-first-dev`：README 中安装示例改为使用该 owner/repo，并增加源码链接；PowerShell 示例改为 clone 后相对路径 `.\doc-first-dev\skills\*`，避免写死本机盘符。
 
 _Commit: `e1d8b85` · By: zzusp_
 
 ## 2026-04-12 — README 面向 skills.sh 发布润色
 
-为在 [skills.sh](https://skills.sh/) 等目录上架做可读性与发现性优化：文首增加中英双语定位与兼容 Agent 说明；用表格列出 `spec-first` / `whylog-record` 的 name 与用途；推荐路径为 `npx skillsadd` 并保留手动复制安装；压缩重复段落，将「两套 skill」对比与 FAQ 收紧。
+为在 [skills.sh](https://skills.sh/) 等目录上架做可读性与发现性优化：文首增加中英双语定位与兼容 Agent 说明；用表格列出 `spec-first` / `whylog-record` 的 name 与用途；推荐路径为 `npx skills add`（后随 README 又纠正为官方子命令写法）并保留手动复制安装；压缩重复段落，将「两套 skill」对比与 FAQ 收紧。
 
 _Commit: `e1d8b85` · By: zzusp_
+
+## 2026-04-12 — skills.sh「发布」机制与 README 安装命令修正
+
+[skills.sh/docs](https://skills.sh/docs) 与 [vercel-labs/skills](https://github.com/vercel-labs/skills) 表明：榜单依赖 CLI 匿名安装统计，无单独提交表单；本地与 `zzusp/doc-first-dev` 远程均已通过 `npx skills add … --list` 识别 `spec-first`、`whylog-record`。README 将错误写法 `npx skillsadd` 改为官方 `npx skills add`，并增加上架说明与示例；已将 `main` 推送到 GitHub。
+
+_Commit: `5bd3252` · By: zzusp_
