@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""读取 docs/plans/README.md 中的功能清单，为每个模块生成基线 spec。"""
+"""读取 docs/plans/PROJECT.md 中的功能清单，为每个模块生成基线 spec。"""
 
 from __future__ import annotations
 
@@ -84,7 +84,7 @@ def build_spec(module_name: str, git_hash: str) -> str:
 
 | 功能点 | 相关接口 | 数据表 |
 |---|---|---|
-<!-- 功能点从 README.md 动态填充 -->
+<!-- 功能点从 PROJECT.md 动态填充 -->
 
 ### 1.3 明确排除范围
 
@@ -169,15 +169,15 @@ def build_spec(module_name: str, git_hash: str) -> str:
 
 def main() -> int:
     project_root = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else Path.cwd()
-    readme_path = project_root / "docs" / "plans" / "README.md"
+    readme_path = project_root / "docs" / "plans" / "PROJECT.md"
 
     if not readme_path.exists():
-        print("[generate-baseline-specs] 错误：未找到 docs/plans/README.md，请先运行 /spec-init Step 2", file=sys.stderr)
+        print("[generate-baseline-specs] 错误：未找到 docs/plans/PROJECT.md，请先运行 /spec-init Step 2", file=sys.stderr)
         return 1
 
     modules = extract_modules(readme_path)
     if not modules:
-        print("[generate-baseline-specs] 错误：未从 README.md 中提取到模块列表", file=sys.stderr)
+        print("[generate-baseline-specs] 错误：未从 PROJECT.md 中提取到模块列表", file=sys.stderr)
         return 1
 
     print("[generate-baseline-specs] 开始生成基线 spec...")
@@ -201,7 +201,7 @@ def main() -> int:
             failed = True
 
     if failed:
-        print("[generate-baseline-specs] 错误：部分文件生成失败，请检查目录权限或 README.md 格式", file=sys.stderr)
+        print("[generate-baseline-specs] 错误：部分文件生成失败，请检查目录权限或 PROJECT.md 格式", file=sys.stderr)
         return 1
 
     print("[generate-baseline-specs] 验证通过：所有文件生成成功")

@@ -65,7 +65,7 @@
 本项目启用文档先行（doc-first）开发规范，由 `/spec-first` skill 驱动：
 
 1. 任何需求变更、功能新增、Bug 修复，必须先运行 `/spec-first <需求描述>` 更新技术方案，再开始编码。
-2. 技术方案文档位于 `docs/plans/`，模块索引见 `docs/plans/README.md`。
+2. 技术方案文档位于 `docs/plans/`，模块索引见 `docs/plans/PROJECT.md`。
 3. spec 文档记录**当前状态**，不记录变更历史——直接改写旧内容。
 4. spec 更新和代码变更放在同一次 git commit 中。
 5. spec 与实际代码不一致时，停止并向用户说明差异，等确认后再继续。

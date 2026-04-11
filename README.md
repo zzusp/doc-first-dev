@@ -13,7 +13,7 @@ doc-first-dev/
 │   │   ├── error-handling.md             # 异常处理规则（按需加载）
 │   │   └── assets/
 │   │       ├── CLAUDE.md-snippet.md      # 粘贴到项目 CLAUDE.md 的片段
-│   │       ├── plans-README.md          # docs/plans/README.md 模块索引模板
+│   │       ├── plans-PROJECT.md         # docs/plans/PROJECT.md 项目索引模板
 │   │       └── doc-first.json           # .doc-first.json 项目配置模板
 │   ├── spec-analyze/
 │   │   └── SKILL.md                      # /spec-analyze skill（只读分析）
@@ -29,7 +29,7 @@ doc-first-dev/
 │   │   ├── SKILL.md                      # /spec-init skill（已有项目初始化）
 │   │   ├── assets/
 │   │   │   ├── generate-baseline-specs.py  # Spec 生成脚本
-│   │   │   ├── plans-README.md            # 模块索引模板
+│   │   │   ├── plans-PROJECT.md           # 项目索引模板
 │   │   │   └── tech-spec-blank.md         # 空白 8 节技术方案模板
 │   │   └── reference/
 │   │       └── languages.md              # 语言扫描规则参考
@@ -139,7 +139,7 @@ cp ~/.claude/skills/spec-first/assets/doc-first.json .doc-first.json
 
 # 初始化文档目录
 mkdir -p docs/plans
-cp ~/.claude/skills/spec-first/assets/plans-README.md docs/plans/README.md
+cp ~/.claude/skills/spec-first/assets/plans-PROJECT.md docs/plans/PROJECT.md
 ```
 
 **步骤 3：更新 CLAUDE.md**
