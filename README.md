@@ -18,11 +18,8 @@ doc-first-dev/
 │   │       └── tech-spec-blank.md        # 8 节技术方案空白模板
 │   └── whylog-record/                    ★ 核心：记录开发决策
 │       └── SKILL.md                      # /whylog-record skill（记录开发决策）
-├── reference/
-│   ├── demo-tech-spec.md                 # 完整技术方案示例
-│   └── demo-openapi.md                   # 完整 OpenAPI 文档示例
-└── examples/
-    └── doc-first-java.json               # Java/Maven 项目配置示例
+└── reference/
+    └── best-practices.md                 # Skill 编写最佳实践（Anthropic 官方指南）
 ```
 
 ---
@@ -77,16 +74,10 @@ skill 会在 `docs/plans/` 下自动查找或创建 spec，直接进入开发周
 cp -r skills/* ~/.claude/skills/
 ```
 
-**步骤 2：初始化文档与项目配置**
+**步骤 2：初始化文档目录**
 
 ```bash
 cd <your-project>
-
-# 复制项目配置（Java/Maven 项目）
-cp examples/doc-first-java.json .doc-first.json
-# 其他语言：参考下方 .doc-first.json 配置参数手动创建
-
-# 初始化文档目录
 mkdir -p docs/plans
 cp ~/.claude/skills/spec-first/assets/plans-PROJECT.md docs/plans/PROJECT.md
 ```
@@ -102,34 +93,6 @@ cp ~/.claude/skills/spec-first/assets/plans-PROJECT.md docs/plans/PROJECT.md
 ```
 
 应看到文档选择器弹出。当前版本默认不启用 PreToolUse 拦截，先按 `/spec-first` 流程观察执行效果。
-
----
-
-## .doc-first.json 配置参数
-
-| 参数 | 类型 | 说明 | 省略时的默认值 |
-|---|---|---|---|
-| `sourcePatterns` | `string[]` | 正则数组，用于定义项目源码目录匹配规则 | `["src[/\\]"]` |
-| `docDir` | `string` | 文档目录约定，用于 `/spec-first` 流程定位技术方案文档 | `"docs/plans/"` |
-
-### 各语言 sourcePatterns 参考
-
-```json
-// Java/Maven
-{ "sourcePatterns": ["src[/\\\\](main|test)[/\\\\]java"] }
-
-// Python
-{ "sourcePatterns": ["src[/\\\\]", "app[/\\\\]", "lib[/\\\\]"] }
-
-// Node.js / TypeScript
-{ "sourcePatterns": ["src[/\\\\]", "lib[/\\\\]"] }
-
-// Go
-{ "sourcePatterns": ["internal[/\\\\]", "cmd[/\\\\]", "pkg[/\\\\]"] }
-
-// Rust
-{ "sourcePatterns": ["src[/\\\\]"] }
-```
 
 ---
 
@@ -204,7 +167,7 @@ A：不需要。默认模板已移除 PreToolUse hook 配置，不再区分 Bash
 A：可在项目 `.claude/settings.json` 重新添加 PreToolUse 配置，并恢复对应脚本后再启用。建议先观察一段时间流程执行数据，再决定是否回加。
 
 **Q：monorepo 多个子项目能用吗？**
-A：可以。每个子项目根目录分别放 `.doc-first.json` 与 `docs/plans/`，各自独立使用 `/spec-first` 流程。
+A：可以。每个子项目根目录分别放 `docs/plans/`，各自独立使用 `/spec-first` 流程。
 
 **Q：/spec-first skill 如何知道构建命令和启动命令？**
 A：Phase B.4 和 Phase C.1 会读取项目 `CLAUDE.md` 中的"构建命令"和"启动与认证"章节。这两个章节是必填项，使用 `~/.claude/skills/spec-first/assets/CLAUDE.md-snippet.md` 中的片段并填写实际命令。
