@@ -1,8 +1,8 @@
 # Doc-First Dev
 
-**English:** Reusable **Agent Skills** for doc-first delivery — structured specs under `docs/plans/`, phased workflow from analysis to sign-off, plus optional **decision logging**. Works with agents listed on the [Agent Skills Directory](https://skills.sh/) (Claude Code, Cursor, Codex, and others that load skill folders).
+**English:** One living spec per module, decisions logged separately — **Agent Skills** that make doc-first delivery a habit, not a burden. Works with agents listed on the [Agent Skills Directory](https://skills.sh/) (Claude Code, Cursor, Codex, and others that load skill folders).
 
-**中文：** 将「文档先行」固化成可安装的 **Skills + 模板**：用技术方案驱动分析、开发、验收与收尾，并用决策日志沉淀「为什么这样做」。
+**中文：** 每个模块一份活文档，spec 记现状、决策日志记理由——将文档先行固化成可安装的 **Skills + 模板**。
 
 | Skill 名称（`SKILL.md`） | 典型触发 | 一句话 |
 |---|---|---|
@@ -11,6 +11,36 @@
 
 **许可证：** [MIT](LICENSE)  
 **源码：** [github.com/zzusp/doc-first-dev](https://github.com/zzusp/doc-first-dev)
+
+---
+
+## 核心设计
+
+| 设计点 | 描述 |
+|---|---|
+| **模块目录化** | 每个功能模块在 `docs/plans/<module>/` 下独立存放，索引统一入口 `PROJECT.md` |
+| **单一活文档** | 每个模块只有一份 spec，就地更新，永远代表当前真实状态 |
+| **spec / 决策分治** | `docs/plans/` 记录「是什么」，`docs/decisions/log.md` 记录「为什么」，互不污染 |
+| **确认门** | 分析（Phase A）→ 用户确认 → 开发（Phase B），未确认前禁止改代码 |
+
+**目标项目落地后的结构示例：**
+
+```
+your-project/
+└── docs/
+    ├── plans/
+    │   ├── PROJECT.md              # 模块索引（自动生成或手动维护）
+    │   ├── user-auth/
+    │   │   └── user-auth-spec.md   # 用户认证模块 spec（唯一、就地更新）
+    │   ├── order-service/
+    │   │   └── order-spec.md
+    │   └── payment/
+    │       └── payment-spec.md
+    └── decisions/
+        ├── log.md                  # 当前活跃决策日志（所有模块共用）
+        ├── log-2026-01.md          # 归档：超过 150 条后自动轮转
+        └── log-2025-12.md
+```
 
 ---
 
