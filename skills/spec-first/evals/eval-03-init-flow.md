@@ -17,7 +17,7 @@
 ## 预期行为
 
 - [ ] 前置检查：检测到 docs/plans/PROJECT.md 不存在
-- [ ] 读取 init.md，从 assets/plans-PROJECT.md 模板创建 docs/plans/PROJECT.md
+- [ ] 读取 init.md，从 assets/project-index.md 模板创建 docs/plans/PROJECT.md
 - [ ] 输出警告提示，询问用户填写项目基本信息（项目定位、技术栈、API 约定）
 - [ ] 等待用户回复（提供信息或"跳过"）
 - [ ] 填入用户提供的信息后保存，返回 SKILL.md Step 0

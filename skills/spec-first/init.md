@@ -2,7 +2,24 @@
 
 `docs/plans/PROJECT.md` 不存在，执行以下步骤，完成后返回 SKILL.md 进入 Step 0。
 
-1. 读取 `skills/spec-first/assets/plans-PROJECT.md` 作为骨架，写入 `docs/plans/PROJECT.md`
+1. 读取 `skills/spec-first/assets/project-index.md` 作为骨架，写入 `docs/plans/PROJECT.md`。若该路径读取失败（CWD 不在项目根目录时常见），直接使用以下最小骨架内联写入：
+   ```markdown
+   # 项目索引
+
+   > 本文件记录项目功能模块清单与对应技术方案路径。
+
+   ## 项目概览
+
+   - **项目定位**：
+   - **技术栈**：
+   - **全局 API 约定**：
+
+   ## 功能清单
+
+   | 一级模块 | 二级模块 | 技术方案 |
+   |---|---|---|
+   | — | — | — |
+   ```
 2. 输出提示：
 
 ```

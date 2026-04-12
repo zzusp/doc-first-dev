@@ -67,6 +67,7 @@ Copy-Item -Path ".\doc-first-dev\skills\*" -Destination "$env:USERPROFILE\.claud
 ```
 doc-first-dev/
 ├── README.md
+├── CLAUDE.md                       # 维护本仓库时的规则（给 AI agent 看）
 ├── LICENSE
 ├── skills/
 │   ├── spec-first/                 ★ 文档驱动全周期
@@ -75,12 +76,13 @@ doc-first-dev/
 │   │   ├── step0.md
 │   │   ├── phase-a.md … phase-d.md
 │   │   ├── error-handling.md
-│   │   ├── assets/                 # CLAUDE 片段、PROJECT/spec/API 模板
-│   │   └── evals/                  # 可选评测场景说明
+│   │   ├── assets/                 # claude-md-snippet、project-index、spec/API 模板
+│   │   └── evals/                  # 评测场景（3 个主要路径）
 │   └── whylog-record/              ★ 决策记录
-│       └── SKILL.md
+│       ├── SKILL.md
+│       └── evals/                  # 评测场景（记录 vs 跳过 边界）
 └── reference/
-    └── best-practices.md           # Skill 编写参考
+    └── best-practices.md           # Skill 编写参考，修改 skill 前必读
 ```
 
 ---
@@ -100,7 +102,7 @@ doc-first-dev/
 
 1. **安装 skills**（见上节）。
 2. 在目标项目中准备 `docs/plans/`（若缺失，部分流程会先由 `init.md` 生成 `PROJECT.md`，仍建议目录预先存在）。
-3. 将 `spec-first/assets/CLAUDE.md-snippet.md` 合并进项目 `CLAUDE.md`，填好**构建**与**启动/认证**等与 Phase B.4、C.1 相关的段落。
+3. 将 `spec-first/assets/claude-md-snippet.md` 合并进项目 `CLAUDE.md`，填好**构建**与**启动/认证**等与 Phase B.4、C.1 相关的段落。
 4. 验证：`/spec-first` + 一句测试需求，应出现文档匹配或初始化提示。
 
 ---
