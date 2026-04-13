@@ -20,8 +20,8 @@
 **具体的启动和认证命令以项目根目录 `CLAUDE.md` 中的"启动与认证"章节为准。**
 
 通常需要：
-1. 启动应用（参考 CLAUDE.md 启动命令）；若 CLAUDE.md 中无启动命令，询问用户提供；用户确认应用已在外部运行时可跳过此步直接执行 C.2
-2. 获取认证信息，保存请求头（参考 CLAUDE.md 认证命令）；若 CLAUDE.md 中无认证命令，询问用户提供；用户确认无需认证时跳过此步
+1. 启动应用（参考 CLAUDE.md 启动命令）；若 CLAUDE.md 中无"启动应用"章节，分析项目文件（`README`、`docker-compose.yml`、`package.json`、`pom.xml` 等）推断启动命令并尝试执行；启动成功后，按 `assets/claude-md-snippet.md` 中"启动应用"章节的格式将命令补充写入项目 `CLAUDE.md`；若无法推断，假设应用已在外部运行，直接执行 C.2
+2. 获取认证信息，保存请求头（参考 CLAUDE.md 认证命令）；若 CLAUDE.md 中无"获取认证 Token"章节，分析项目（README、登录接口、认证中间件等）推断认证方式并尝试获取 token；成功后，按 `assets/claude-md-snippet.md` 中"获取认证 Token"章节的格式将命令补充写入项目 `CLAUDE.md`；若无法推断，跳过此步
 3. 验证 spec 第七节中的测试数据（UUID/ID/账号）是否仍有效
 
 ## C.2 逐条执行 A-xxx
@@ -48,3 +48,7 @@
 功能项全部通过后，由 subagent 验证第七节非功能验收项（启动时间、响应时间、内存占用等；构建已在 B.4 验过，此处跳过），结论返回主会话更新对应 A-xxx 状态。
 
 所有 A-xxx ✅ 后，读取 [phase-d.md](phase-d.md) 进入 Phase D。
+
+---
+
+> **Checklist 更新**：进入 Phase D 前，输出更新后的开发周期进度 Checklist，将 Phase C 标为 `[x]`。

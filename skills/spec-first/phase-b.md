@@ -15,7 +15,7 @@
 - 不同文件且无逻辑依赖 → 并行
 - P0 先于 P1 先于 P2；同优先级内再判断是否可并行
 
-输出执行计划后等待确认再开始：
+输出执行计划后直接开始执行（Phase A 已确认，无需再次等待）：
 
 ```
 执行计划：
@@ -53,6 +53,12 @@
 
 ## B.4 构建验证
 
-所有 T-xxx 完成后，按项目根目录 `CLAUDE.md` 中"构建命令"章节运行构建验证；若 CLAUDE.md 无构建命令则询问用户，用户确认跳过时直接进入 Phase C。
+所有 T-xxx 完成后，按项目根目录 `CLAUDE.md` 中"构建命令"章节运行构建验证。
 
-构建通过后读取 [phase-c.md](phase-c.md) 进入 Phase C。若构建失败，subagent 定位失败原因并尝试修复后重跑；反复失败时 subagent 停止并向主会话报告，等确认后继续。
+**若 CLAUDE.md 中无"构建命令"章节**：分析项目文件（`package.json`、`pom.xml`、`go.mod`、`Makefile`、`build.gradle` 等）推断构建命令并尝试执行；执行成功后，按 `assets/claude-md-snippet.md` 中"构建命令"章节的格式将命令补充写入项目 `CLAUDE.md`，再继续；若无法推断则直接跳过构建步骤，进入 Phase C。
+
+构建通过后**立即**读取 [phase-c.md](phase-c.md) 进入 Phase C，不等待用户确认。若构建失败，subagent 定位失败原因并尝试修复后重跑；反复失败时 subagent 停止并向主会话报告，等确认后继续。
+
+---
+
+> **Checklist 更新**：进入 Phase C 前，输出更新后的开发周期进度 Checklist，将 Phase B 标为 `[x]`。

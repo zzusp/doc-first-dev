@@ -45,7 +45,7 @@
    - 在选择器 header 中注明触发原因：步骤 1 触发时用 `"PROJECT.md 不存在，以下为目录扫描结果"`；步骤 2 触发时用 `"未在 PROJECT.md 中找到匹配模块，以下为目录扫描结果"`
 4. 先调用 `ToolSearch`（query: `"select:AskUserQuestion"`）获取工具 schema，然后调用 `AskUserQuestion` 工具呈现文档选择器。
 
-   `AskUserQuestion` 是延迟加载工具，不做 ToolSearch 直接调用会失败并退化为渲染 JSON 文本，必须先获取 schema。**此为 AskUserQuestion 标准调用序列，后续章节同。**
+   `AskUserQuestion` 是延迟加载工具，不做 ToolSearch 直接调用会失败并退化为渲染 JSON 文本，必须先获取 schema。**全文件所有 AskUserQuestion 调用均遵循此序列：先 ToolSearch，再调用。**
 
    调用参数结构如下（这是参数说明，不是展示给用户的内容）：
    - `question`: `"请选择对应的技术方案文档"`
@@ -59,7 +59,27 @@
 **处理用户选择：**
 - 选择某个 spec → 读取对应 spec 全文 → 返回 SKILL.md 进入 Step 1
 - 选择"Other"且用户提供了路径 → 读取该 spec → 返回 SKILL.md 进入 Step 1
-- 选择"Other"且用户说明需要新建 → 询问模块名称和目标路径；读取 `skills/spec-first/assets/tech-spec-blank.md` 作为骨架，将其中的 `<模块名>` 占位符替换为用户提供的模块名后写入目标路径 → 读取 [phase-a.md](phase-a.md) 直接进入 Phase A
+- 选择"Other"且用户说明需要新建 → 询问模块名称和目标路径；尝试读取 `skills/spec-first/assets/tech-spec-blank.md` 作为骨架；若读取失败，使用以下内联骨架：
+  ```markdown
+  # <模块名> 技术方案
+
+  ## 1. 需求边界
+
+  ## 2. 数据库设计
+
+  ## 3. 接口规范
+
+  ## 4. 架构与设计规则
+
+  ## 5. 代码地图
+
+  ## 6. 任务状态
+
+  ## 7. 验收项
+
+  ## 8. 附录
+  ```
+  将骨架中的 `<模块名>` 占位符替换为用户提供的模块名后写入目标路径 → 读取 [phase-a.md](phase-a.md) 直接进入 Phase A
 
 **无论哪种情况，读取 spec 后必须输出以下确认块，再进入下一步：**
 
