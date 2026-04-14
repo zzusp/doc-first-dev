@@ -6,7 +6,8 @@
 
 | Skill 名称（`SKILL.md`） | 典型触发 | 一句话 |
 |---|---|---|
-| **`spec-first`** | `/spec-first <需求或变更描述>` | 全周期：匹配 spec → 更新方案 → 确认门 → 开发 → 验收 → 收尾 |
+| **`spec-first`** | `/spec-first <需求或变更描述>` | 单模块全周期：匹配 spec → 更新方案 → 确认门 → 开发 → 验收 → 收尾 |
+| **`spec-multi`** | `/spec-multi <跨服务需求描述>` | 多服务协调：链路追踪 → 依赖编排 → 并行开发 → 集成验收（单服务 + E2E） |
 | **`whylog-record`** | 任务完成后主动记录 | 把决策与替代方案追加到 `docs/decisions/log.md` |
 
 **许可证：** [MIT](LICENSE)  
@@ -76,7 +77,7 @@ npx skills add zzusp/doc-first-dev --list
 npx skills add zzusp/doc-first-dev --skill spec-first -g -a claude-code -y
 ```
 
-本仓库在 `skills/` 下包含 **`spec-first`** 与 **`whylog-record`** 两个 skill，CLI 会分别安装到各 Agent 约定的 skills 目录。
+本仓库在 `skills/` 下包含 **`spec-first`**、**`spec-multi`** 与 **`whylog-record`** 三个 skill，CLI 会分别安装到各 Agent 约定的 skills 目录。
 
 ### 「发布」到 skills.sh 榜单：你需要知道的事
 
@@ -117,7 +118,7 @@ doc-first-dev/
 ├── CLAUDE.md                       # 维护本仓库时的规则（给 AI agent 看）
 ├── LICENSE
 ├── skills/
-│   ├── spec-first/                 ★ 文档驱动全周期
+│   ├── spec-first/                 ★ 单模块文档驱动全周期
 │   │   ├── SKILL.md                # 入口、进度 Checklist、前置检查
 │   │   ├── init.md                 # 无 PROJECT.md 时初始化索引
 │   │   ├── step0.md
@@ -125,6 +126,14 @@ doc-first-dev/
 │   │   ├── error-handling.md
 │   │   ├── assets/                 # claude-md-snippet、project-index、spec/API 模板
 │   │   └── evals/                  # 评测场景（3 个主要路径）
+│   ├── spec-multi/                 ★ 多服务并行开发
+│   │   ├── SKILL.md                # 入口、触发条件、关键约定
+│   │   ├── init.md                 # 无 SERVICES.md 时注册服务清单
+│   │   ├── step0.md
+│   │   ├── phase-a.md … phase-d.md
+│   │   ├── error-handling.md
+│   │   ├── assets/                 # 需求文档模板、服务索引模板
+│   │   └── evals/                  # 评测场景（跨服务、接口漂移、部分服务变更）
 │   └── whylog-record/              ★ 决策记录
 │       ├── SKILL.md
 │       └── evals/                  # 评测场景（记录 vs 跳过 边界）
@@ -134,14 +143,16 @@ doc-first-dev/
 
 ---
 
-## 为什么需要两套 Skill
+## 三个 Skill 的分工
 
-| 维度 | **`spec-first`** | **`whylog-record`** |
-|---|---|---|
-| 回答的问题 | 项目**现在应该怎样**（需求、设计、任务、验收） | 我们是**如何走到这一步**的（决策、取舍、演变） |
-| 主要产出 | `docs/plans/` 下的 spec 与索引 | `docs/decisions/log.md` |
+| 维度 | **`spec-first`** | **`spec-multi`** | **`whylog-record`** |
+|---|---|---|---|
+| 适用场景 | 单模块日常迭代 | 跨多个服务/项目的需求 | 任务完成后记录决策 |
+| 回答的问题 | 这个模块**现在应该怎样** | 多个服务**如何协调变更** | 我们是**如何走到这一步**的 |
+| 主要产出 | `docs/plans/` 下的 spec | `docs/plans/requirements/` 下的需求文档 | `docs/decisions/log.md` |
+| 核心机制 | 状态驱动阶段路由、单模块 subagent 隔离 | 链路追踪、依赖编排、单服务 + E2E 集成验收 | 顺序追加、只增不改 |
 
-两者一起用，更接近「可维护的文档化知识库」，而不是一次性生成的说明文。
+三者一起用：`spec-first` / `spec-multi` 管「做什么」，`whylog-record` 管「为什么这样做」。
 
 ---
 
@@ -190,6 +201,9 @@ A：默认不启用；以 skill 内阶段与确认门为主，需要时可自行
 
 **Q：monorepo 多包怎么用？**  
 A：每个子项目根目录各自维护 `docs/plans/` 即可。
+
+**Q：`spec-first` 和 `spec-multi` 怎么选？**  
+A：需求只涉及一个模块/服务用 `spec-first`；需求跨多个服务同时变更（前端+后端、后端+数据服务等）用 `spec-multi`。
 
 **Q：构建/启动命令从哪里来？**  
 A：`spec-first` 的 B.4 / C.1 会读项目 `CLAUDE.md` 中由片段模板约定的章节。

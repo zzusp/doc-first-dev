@@ -21,6 +21,8 @@ Step0（需求接收）→ Phase A（分析）→ Phase B（开发）→ Phase C
 
 用户指定从某个 Phase 开始时，从该 Phase 直接切入（如"从 Phase B 继续"）。
 
+异常处理规则见 [error-handling.md](error-handling.md)。
+
 ## 各阶段入口
 
 | 阶段 | 文件 | 核心产出 |
