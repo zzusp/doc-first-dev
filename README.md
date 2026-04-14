@@ -41,10 +41,10 @@ Phase A（分析）结束后，必须经过用户显式确认，才能进入 Pha
 
 **理念：** AI Agent 有一种内在偏向：一旦理解了需求，会倾向于立刻开始写代码。这在需求模糊或理解存在偏差时代价极高——改错方向的代码比没有代码更难处理，因为它制造了需要被推翻的"既成事实"。确认门把"分析"和"动手"强制解耦，把人放回决策节点，而不是只在事后 review 结果。
 
-**目标项目落地后的结构示例：**
+**`spec-first` 目标项目落地后的结构示例：**
 
 ```
-your-project/
+your-project/                        # 单服务项目
 └── docs/
     ├── plans/
     │   ├── PROJECT.md              # 模块索引（自动生成或手动维护）
@@ -58,6 +58,27 @@ your-project/
         ├── log.md                  # 当前活跃决策日志（所有模块共用）
         ├── log-2026-01.md          # 归档：超过 150 条后自动轮转
         └── log-2025-12.md
+```
+
+**`spec-multi` 目标项目落地后的结构示例：**
+
+```
+workspace-root/                      # 多服务 monorepo 或 workspace
+├── frontend/                        # 服务 A
+│   └── src/
+├── backend/                         # 服务 B
+│   └── src/
+├── data-service/                    # 服务 C
+│   └── src/
+├── docker-compose.yml               # 集成启动（spec-multi C.1 优先使用）
+└── docs/
+    ├── plans/
+    │   ├── SERVICES.md              # 服务注册表（服务名、路径、端口、依赖关系）
+    │   └── requirements/
+    │       ├── export-feature.md    # 需求文档（跨 backend + data-service）
+    │       └── user-import.md       # 需求文档（跨 frontend + backend）
+    └── decisions/
+        └── log.md
 ```
 
 ---
